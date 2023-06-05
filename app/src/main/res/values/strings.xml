@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">BasicApplication</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- Welcome Fragment Values -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_account_button">Create Account</string>
+    <string name="account_exists_button">I already have an account</string>
+    <string name="welcome">Welcome!</string>
+
+    <string name="cancel_text">Cancel</string>
+
+
+    <!-- Menu items titles -->
+
+    <string name="home_navigation">Home</string>
+    <string name="make_navigation">Make</string>
+    <string name="profile_navigation">Profile</string>
+
+
+    <!-- Sign in screen values -->
+
+    <string name="forgot_password">Forgot login or password?</string>
+    <string name="signin">Sign In</string>
+    <string name="signup">Sign Up</string>
+
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="username_hint">User Name</string>
+    <string name="birthday_hint">Birthday</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+
+    <string name="back_button">Back</string>
+
+    <string name="new_text">New</string>
+    <string name="popular_text">Popular</string>
+
+</resources>

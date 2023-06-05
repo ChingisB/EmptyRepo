@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="OutlinedTextFieldStyle">
+        <item name="android:background">@drawable/outlined_text_field</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textColor">@color/outlined_text_field_colors</item>
+        <item name="android:textColorHint">@color/grey</item>
+    </style>
+
+</resources>
