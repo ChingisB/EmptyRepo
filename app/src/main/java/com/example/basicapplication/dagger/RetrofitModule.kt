@@ -5,27 +5,43 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
-import com.example.basicapplication.api.Config
-import com.example.basicapplication.api.TokenInterceptor
-import com.example.basicapplication.api.service.AuthenticationService
-import com.example.basicapplication.api.service.PhotoService
+import com.example.basicapplication.data.data_source.api.Config
+import com.example.basicapplication.data.data_source.api.TokenInterceptor
+import com.example.basicapplication.data.data_source.api.service.AuthenticationService
+import com.example.basicapplication.data.data_source.api.service.PhotoService
+import com.example.basicapplication.data.data_source.api.service.UserService
 import dagger.Module
 import dagger.Provides
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-@Module
+@Module(includes = [RetrofitBindModule::class])
 class RetrofitModule {
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory,
+        rxJava2CallAdapterFactory: RxJava2CallAdapterFactory
+    ): Retrofit {
         return Retrofit.Builder().baseUrl(Config.apiUrl).client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(gsonConverterFactory)
+            .addCallAdapterFactory(rxJava2CallAdapterFactory)
             .build()
+    }
+
+    @Provides
+    fun provideGsonAdapterFactory(): GsonConverterFactory {
+        return GsonConverterFactory.create()
+    }
+
+    @Provides
+    fun provideCallAdapterFactory(): RxJava2CallAdapterFactory {
+        return RxJava2CallAdapterFactory.create()
     }
 
     @Provides
@@ -35,10 +51,13 @@ class RetrofitModule {
 
     @Provides
     fun provideOkHttpClient(
-        chuckerInterceptor: ChuckerInterceptor, tokenInterceptor: TokenInterceptor
+        chuckerInterceptor: ChuckerInterceptor,
+        authenticator: Authenticator,
+        tokenInterceptor: TokenInterceptor
     ): OkHttpClient {
-        val okHttpClient = OkHttpClient.Builder().addInterceptor(tokenInterceptor)
-            .addInterceptor(chuckerInterceptor)
+        val okHttpClient =
+            OkHttpClient.Builder().authenticator(authenticator).addInterceptor(tokenInterceptor)
+                .addInterceptor(chuckerInterceptor)
         return okHttpClient.build()
     }
 
@@ -48,14 +67,27 @@ class RetrofitModule {
     }
 
     @Provides
-    fun provideChuckerInterceptor(context: Context): ChuckerInterceptor {
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    fun provideChuckerCollector(context: Context): ChuckerCollector {
+        return ChuckerCollector(
+            context,
+            showNotification = true,
+            retentionPeriod = RetentionManager.Period.ONE_HOUR
+        )
+    }
+
+    @Provides
+    fun provideChuckerInterceptor(
+        context: Context,
+        chuckerCollector: ChuckerCollector
+    ): ChuckerInterceptor {
         return ChuckerInterceptor.Builder(context)
             .collector(
-                ChuckerCollector(
-                    context,
-                    showNotification = true,
-                    retentionPeriod = RetentionManager.Period.ONE_HOUR
-                )
+                chuckerCollector
             )
             .maxContentLength(250000L)
             .redactHeaders(emptySet())

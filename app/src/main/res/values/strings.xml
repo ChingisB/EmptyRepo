@@ -34,5 +34,21 @@
 
     <string name="new_text">New</string>
     <string name="popular_text">Popular</string>
+    <string name="bottom_navigation">bottom navigation</string>
+    <string name="showing_post_photo">showing post photo</string>
+    <string name="photo_avatar">photo avatar</string>
+    <string name="settings">settings</string>
+    <string name="logo">logo</string>
+
+
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_birthday">Invalid date format. Correct yyyy-mm-dd"</string>
+    <string name="empty_password_error">Password cannot be empty</string>
+    <string name="password_length_error">Password minimum length should be 5 characters</string>
+    <string name="password_match_error">Passwords don\'t match</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="username_in_use_error">Username is already in use</string>
+    <string name="email_in_use_error">Email is already in use</string>
+    <string name="invalid_credentials">Invalid credentials</string>
 
 </resources>

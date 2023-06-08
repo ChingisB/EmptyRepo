@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.basicapplication.R
 import com.example.basicapplication.databinding.FragmentWelcomeBinding
-import com.example.basicapplication.ui.signIn.SignInFragment
-import com.example.basicapplication.ui.signUp.SignUpFragment
+import com.example.basicapplication.ui.sign_in.SignInFragment
+import com.example.basicapplication.ui.sign_up.SignUpFragment
 
 
 class WelcomeFragment : Fragment() {
@@ -26,12 +26,12 @@ class WelcomeFragment : Fragment() {
 
         binding.navigateToSignin.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, SignInFragment()).addToBackStack("signin").commit()
+                .replace(R.id.fragmentContainer, SignInFragment()).commit()
         }
 
         binding.navigateToSignup.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, SignUpFragment()).addToBackStack("signup").commit()
+                .replace(R.id.fragmentContainer, SignUpFragment()).commit()
         }
 
         return binding.root

@@ -3,14 +3,18 @@ package com.example.basicapplication.dagger
 
 import android.content.Context
 import com.example.basicapplication.MainActivity
-import com.example.basicapplication.ui.newPhotos.NewPhotosFragment
-import com.example.basicapplication.ui.signIn.SignInFragment
-import com.example.basicapplication.ui.signUp.SignUpFragment
+import com.example.basicapplication.ui.new_photos.NewPhotosFragment
+import com.example.basicapplication.ui.profile.ProfileFragment
+import com.example.basicapplication.ui.sign_in.SignInFragment
+import com.example.basicapplication.ui.sign_up.SignUpFragment
 import dagger.BindsInstance
 import dagger.Component
 
-@Component(modules = [RetrofitModule::class, RepositoryModule::class, SharedPreferencesModule::class])
-interface AppComponent{
+@Component(
+    modules = [RetrofitModule::class, RepositoryModule::class,
+        SharedPreferencesModule::class, TokenManagerModule::class, UseCaseModule::class]
+)
+interface AppComponent {
 
     fun injectActivity(activity: MainActivity)
 
@@ -20,8 +24,10 @@ interface AppComponent{
 
     fun injectNewPhotosFragment(fragment: NewPhotosFragment)
 
+    fun injectProfileFragment(fragment: ProfileFragment)
+
     @Component.Builder
-    interface Builder{
+    interface Builder {
 
         @BindsInstance
         fun context(context: Context): Builder

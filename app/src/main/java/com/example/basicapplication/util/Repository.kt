@@ -1,7 +1,7 @@
 package com.example.basicapplication.util
 
-import com.example.basicapplication.model.baseModel.BaseCreateEntity
-import com.example.basicapplication.model.baseModel.BaseEntity
+import com.example.basicapplication.model.base_model.BaseCreateEntity
+import com.example.basicapplication.model.base_model.BaseEntity
 import io.reactivex.Completable
 import io.reactivex.Single
 

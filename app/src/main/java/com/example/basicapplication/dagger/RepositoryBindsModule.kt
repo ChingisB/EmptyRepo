@@ -1,10 +1,10 @@
 package com.example.basicapplication.dagger
 
-import com.example.basicapplication.model.retrofitModel.*
-import com.example.basicapplication.repository.authenticationRepository.AuthenticationRepository
-import com.example.basicapplication.repository.authenticationRepository.AuthenticationRepositoryImpl
-import com.example.basicapplication.repository.photoRepository.PhotoRepository
-import com.example.basicapplication.repository.photoRepository.PhotoRepositoryImpl
+import com.example.basicapplication.model.retrofit_model.*
+import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepository
+import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepositoryImpl
+import com.example.basicapplication.data.repository.photo_repository.PhotoRepository
+import com.example.basicapplication.data.repository.photo_repository.PhotoRepositoryImpl
 import dagger.Binds
 import dagger.Module
 
