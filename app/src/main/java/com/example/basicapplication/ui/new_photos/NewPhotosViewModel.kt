@@ -1,7 +1,5 @@
 package com.example.basicapplication.ui.new_photos
 
-
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,7 +25,6 @@ class NewPhotosViewModel(private val photoRepository: PhotoRepository<Photo, Cre
     fun fetch(page: Int) {
         val disposable = photoRepository.getNewPhotos(page).subscribe(
             { value ->
-                Log.e("aaa", value.toString())
                 if (value.isEmpty()) {
                     _isLastPage.postValue(true)
                 } else {
