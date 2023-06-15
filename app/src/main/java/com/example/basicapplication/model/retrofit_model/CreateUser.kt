@@ -4,7 +4,7 @@ package com.example.basicapplication.model.retrofit_model
 import com.example.basicapplication.model.base_model.CreateUserInterface
 import com.google.gson.annotations.SerializedName
 
-data class CreateUser(
+data class  CreateUser(
     @SerializedName("birthday")
     val birthday: String,
     @SerializedName("confirm_password")

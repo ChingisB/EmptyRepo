@@ -1,6 +1,6 @@
-package com.example.basicapplication.data.data_source.api
+package com.example.basicapplication.data.repository.token_repository
 
-interface TokenManager {
+interface TokenRepository {
     fun getAccessToken(): String?
 
     fun getRefreshToken(): String?
@@ -8,6 +8,10 @@ interface TokenManager {
     fun saveAccessToken(token: String)
 
     fun saveRefreshToken(token: String)
+
+    fun saveTokens(accessToken: String, refreshToken: String)
+
+    fun deleteTokens()
 
     fun deleteAccessToken()
 

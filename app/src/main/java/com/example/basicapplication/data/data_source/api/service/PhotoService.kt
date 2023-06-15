@@ -10,9 +10,10 @@ import retrofit2.http.*
 interface PhotoService {
     @GET("api/photos")
     fun getPhotos(
-        @Query("new") new: Boolean,
-        @Query("popular") popular: Boolean,
-        @Query("page") page: Int
+        @Query("new") new: Boolean? = null,
+        @Query("popular") popular: Boolean? = null,
+        @Query("page") page: Int? = null,
+        @Query("user.id") userId: Int? = null
     ): Single<PhotoResponse>
 
 

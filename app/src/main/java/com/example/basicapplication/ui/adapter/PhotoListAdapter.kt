@@ -49,7 +49,7 @@ class PhotoListAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(photos: List<Photo>) {
-        this.photoList = photos
+        this.photoList = this.photoList.plus(photos)
         Log.e("values for adapter", photos.toString())
         notifyDataSetChanged()
     }

@@ -1,39 +1,34 @@
 package com.example.basicapplication.ui.welcome
 
-import android.os.Bundle
+
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.basicapplication.R
 import com.example.basicapplication.databinding.FragmentWelcomeBinding
 import com.example.basicapplication.ui.sign_in.SignInFragment
 import com.example.basicapplication.ui.sign_up.SignUpFragment
+import com.example.basicapplication.util.BaseFragment
 
 
-class WelcomeFragment : Fragment() {
+class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, WelcomeViewModel>() {
+
+    override lateinit var binding: FragmentWelcomeBinding
+    override val viewModel: WelcomeViewModel by viewModels()
 
 
-    lateinit var binding: FragmentWelcomeBinding
+    override fun setupListeners() {
+        super.setupListeners()
+        binding.navigateToSignin.setOnClickListener { navigateTo(SignInFragment()) }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+        binding.navigateToSignup.setOnClickListener { navigateTo(SignUpFragment()) }
+    }
 
-        binding = FragmentWelcomeBinding.inflate(inflater)
+    override fun getViewBinding(inflater: LayoutInflater): FragmentWelcomeBinding {
+        return FragmentWelcomeBinding.inflate(inflater)
+    }
 
-
-        binding.navigateToSignin.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, SignInFragment()).commit()
-        }
-
-        binding.navigateToSignup.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, SignUpFragment()).commit()
-        }
-
-        return binding.root
+    private fun navigateTo(fragment: Fragment){
+        parentFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit()
     }
 }

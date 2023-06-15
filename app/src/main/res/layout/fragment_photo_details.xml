@@ -1,47 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.photo_details.PhotoDetailsFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="475dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backButton"
-            tools:src="@tools:sample/backgrounds/scenic"
-            android:contentDescription="@string/showing_post_photo"/>
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="14dp"
-            android:clickable="true"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@string/back_button"
-            android:textColor="@color/grey"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_chevron_left"
+            android:backgroundTint="@android:color/transparent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:contentDescription="@string/showing_post_photo"
+            android:scaleType="fitXY"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/photoName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,52 +35,42 @@
             android:layout_marginTop="16dp"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/black"
-            android:textSize="22sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image"
-            app:layout_constraintVertical_bias="0.0" />
+            android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/usernameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/dark_grey"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/photoName"
-            app:layout_constraintTop_toBottomOf="@+id/photoName" />
 
-        <TextView
-            android:id="@+id/postDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="202dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/dark_grey"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/usernameText"
-            app:layout_constraintTop_toBottomOf="@+id/photoName" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_gravity="fill_horizontal"
+            android:layout_marginHorizontal="16dp"
+            android:layout_height="wrap_content">
 
-        <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/usernameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/dark_grey"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/postDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/dark_grey"
+                android:textSize="16sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="170dp"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
             android:lineSpacingExtra="2sp"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/postDate"
-            app:layout_constraintStart_toStartOf="@+id/usernameText"
-            app:layout_constraintTop_toBottomOf="@+id/usernameText" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textSize="16sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </FrameLayout>

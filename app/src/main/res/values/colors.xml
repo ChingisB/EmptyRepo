@@ -9,9 +9,12 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#E4E4E4</color>
     <color name="grey">#C4C4C4</color>
-    <color name="dark_pink">#CF497E</color>
+    <color name="dark_pink">#D81B60</color>
     <color name="dark_grey">#BCBCBC</color>
     <color name="search_bar_color">#EEEEEF</color>
     <color name="error_red">#ED3E3E</color>
     <color name="mtrl_textinput_default_box_stroke_color">@color/grey</color>
+    <color name="button_grey">#5F5F5F</color>
+    <color name="search_bar_hint">#50000000</color>
+    <color name="search_bar_background">#308E8E93</color>
 </resources>

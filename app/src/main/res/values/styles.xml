@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="OutlinedTextFieldStyle">
-        <item name="android:background">@drawable/outlined_text_field</item>
-        <item name="android:paddingHorizontal">10dp</item>
-        <item name="android:textCursorDrawable">@null</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:textColor">@color/outlined_text_field_colors</item>
-        <item name="android:textColorHint">@color/grey</item>
-    </style>
-
     <style name="outlinedTextFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="hintEnabled">false</item>
-        <item name="boxStrokeColor">@color/grey</item>
-        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
         <item name="hintTextColor">@color/grey</item>
         <item name="boxStrokeWidth">1dp</item>
         <item name="errorIconTint">@color/error_red</item>
@@ -42,5 +31,6 @@
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/roboto_regular</item>
     </style>
+
 
 </resources>

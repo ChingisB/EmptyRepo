@@ -9,10 +9,7 @@ class ValidateBirthdayUseCase(private val parseDateUseCase: ParseDateUseCase) {
             parseDateUseCase(birthday)
             ValidationResult(success = true)
         } catch (e: Exception) {
-            ValidationResult(
-                success = false,
-                errorMessage = UiText.StringResource(R.string.invalid_birthday)
-            )
+            ValidationResult(success = false, errorMessage = UiText.StringResource(R.string.invalid_birthday))
         }
     }
 

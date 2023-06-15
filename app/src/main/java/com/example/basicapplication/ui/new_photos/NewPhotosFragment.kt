@@ -1,92 +1,95 @@
 package com.example.basicapplication.ui.new_photos
 
+
 import android.content.Context
-import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.basicapplication.MainActivity
-import com.example.basicapplication.R
-import com.example.basicapplication.SharedPhotoViewModel
-import com.example.basicapplication.appComponent
+import com.example.basicapplication.*
 import com.example.basicapplication.databinding.FragmentNewPhotosBinding
 import com.example.basicapplication.ui.adapter.PhotoListAdapter
 import com.example.basicapplication.ui.photo_details.PhotoDetailsFragment
+import com.example.basicapplication.util.BaseFragment
+import com.example.basicapplication.util.Constants
 import com.example.basicapplication.util.RecyclerViewPaginator
+import com.example.basicapplication.util.Resource
 import javax.inject.Inject
+import dagger.Lazy
 
 
-class NewPhotosFragment : Fragment() {
+class NewPhotosFragment : BaseFragment<FragmentNewPhotosBinding, NewPhotosViewModel>() {
 
     @Inject
-    lateinit var viewModelFactory: NewPhotosViewModel.Factory
+    lateinit var viewModelFactory: Lazy<NewPhotosViewModel.Factory>
 
-
-    private val viewModel by viewModels<NewPhotosViewModel> { viewModelFactory }
+    override lateinit var binding: FragmentNewPhotosBinding
+    override val viewModel by viewModels<NewPhotosViewModel> { viewModelFactory.get() }
 
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
-
-
     private lateinit var photoListAdapter: PhotoListAdapter
+    private lateinit var paginator: RecyclerViewPaginator
 
 
-    private lateinit var binding: FragmentNewPhotosBinding
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (activity as Context).appComponent.injectNewPhotosFragment(this)
-        viewModel.fetch(1)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        MainApplication.appComponent.inject(this)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
-
-        binding = FragmentNewPhotosBinding.inflate(inflater)
-
-        photoListAdapter = PhotoListAdapter(emptyList()) {
+    private fun getPhotoListAdapter(): PhotoListAdapter{
+        return PhotoListAdapter(emptyList()) {
             sharedPhotoViewModel.setPhoto(it)
             (activity as MainActivity).supportFragmentManager.beginTransaction()
-                .addToBackStack("photoDetails").replace(
-                    R.id.fragmentContainer, PhotoDetailsFragment()
-                ).commit()
+                .addToBackStack(Constants.photoDetails).add(R.id.fragmentContainer, PhotoDetailsFragment()).commit()
         }
+    }
 
-
-
-        binding.photoGrid.apply {
-            adapter = photoListAdapter
-            layoutManager = GridLayoutManager(activity, 2)
-        }
-
-        val scrollListener = object : RecyclerViewPaginator(binding.photoGrid) {
+    private fun getPaginator(): RecyclerViewPaginator{
+        return object : RecyclerViewPaginator() {
 
             override var isLastPage: Boolean = false
 
-            override fun loadMore(start: Int) {
-                viewModel.fetch(start)
-            }
+            override var isLoading: Boolean = false
+
+            override fun loadMore(start: Int) { viewModel.fetch(start) }
         }
-
-        viewModel.isLastPage.observe(viewLifecycleOwner){
-            scrollListener.isLastPage = it
-        }
-
-        binding.photoGrid.addOnScrollListener(scrollListener)
-
-
-
-        viewModel.photoLiveData.observe(viewLifecycleOwner) { photoListAdapter.submitList(it) }
-
-        return binding.root
     }
 
+    override fun setupViews() {
+        photoListAdapter = getPhotoListAdapter()
+        paginator = getPaginator()
+        binding.photoGrid.apply {
+            adapter = photoListAdapter
+            layoutManager = GridLayoutManager(activity, 2)
+            addOnScrollListener(paginator)
+        }
+    }
+
+    override fun observeData() {
+        viewModel.isLastPage.observe(viewLifecycleOwner) {
+            paginator.isLastPage = it
+        }
+
+        viewModel.photoLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    it.data?.let { it1 -> photoListAdapter.submitList(it1) }
+                    binding.progressBar.visibility = View.GONE
+                    paginator.isLoading = false
+                }
+                is Resource.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    paginator.isLoading = true
+                }
+                is Resource.Error -> { Log.e(Constants.networkError, it.message.toString()) }
+            }
+        }
+    }
+
+    override fun getViewBinding(inflater: LayoutInflater): FragmentNewPhotosBinding {
+        return FragmentNewPhotosBinding.inflate(inflater)
+    }
 
 }

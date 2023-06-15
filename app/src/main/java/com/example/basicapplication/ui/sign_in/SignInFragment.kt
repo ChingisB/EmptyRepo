@@ -1,92 +1,82 @@
 package com.example.basicapplication.ui.sign_in
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.basicapplication.MainActivity
+import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
-import com.example.basicapplication.appComponent
 import com.example.basicapplication.databinding.FragmentSignInBinding
-import com.example.basicapplication.ui.home.HomeFragment
+import com.example.basicapplication.ui.bottom_navigation.BottomNavigationFragment
 import com.example.basicapplication.ui.sign_up.SignUpFragment
 import com.example.basicapplication.ui.welcome.WelcomeFragment
+import com.example.basicapplication.util.BaseFragment
 import com.example.basicapplication.util.Resource
 import javax.inject.Inject
 
-
-class SignInFragment : Fragment() {
-
-
-    private lateinit var binding: FragmentSignInBinding
+class SignInFragment : BaseFragment<FragmentSignInBinding, SignInViewModel>() {
 
     @Inject
     lateinit var viewModelFactory: SignInViewModel.Factory
 
-    private val viewModel by viewModels<SignInViewModel> { viewModelFactory }
+    override lateinit var binding: FragmentSignInBinding
+    override val viewModel by viewModels<SignInViewModel> { viewModelFactory }
 
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as Context).appComponent.injectSignInFragment(this)
+        MainApplication.appComponent.inject(this)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-
-        binding = FragmentSignInBinding.inflate(inflater)
-
-        val context = (activity as Context)
-
-
+    override fun setupListeners() {
+        super.setupListeners()
         binding.apply {
 
-            cancelButton.setOnClickListener { parentFragmentManager.clearBackStack("welcome") }
+            cancelButton.setOnClickListener {navigateTo(WelcomeFragment()) }
 
+            signUpButton.setOnClickListener {navigateTo(SignUpFragment()) }
 
-            cancelButton.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, WelcomeFragment()).commit()
-            }
+            signInButton.setOnClickListener { viewModel.onEvent(SignInFormEvent.Submit) }
 
-            signUpButton.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, SignUpFragment()).commit()
-            }
+            email.addTextChangedListener { text -> viewModel.onEvent(SignInFormEvent.EmailChanged(text.toString())) }
 
-            signInButton.setOnClickListener {
-                viewModel.onEvent(SignInFormEvent.Submit)
-            }
-
-            email.addTextChangedListener { text ->
-                viewModel.onEvent(SignInFormEvent.EmailChanged(text.toString()))
-            }
-
-            signInPassword.addTextChangedListener { text ->
-                viewModel.onEvent(SignInFormEvent.PasswordChanged(text.toString()))
-            }
-
-            viewModel.signInFormState.observe(viewLifecycleOwner) {
-                emailLayout.error = it.emailError?.asString(context)
-                signInPasswordLayout.error = it.passwordError?.asString(context)
-            }
-
-            viewModel.loggedIn.observe(viewLifecycleOwner) {
-                if (it is Resource.Success) {
-                    (activity as MainActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, HomeFragment()).commit()
-                }
-            }
-
+            signInPassword.addTextChangedListener { text -> viewModel.onEvent(SignInFormEvent.PasswordChanged(text.toString())) }
         }
-
-        return binding.root
     }
 
+    private fun navigateTo(fragment: Fragment) = parentFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit()
+
+    override fun addOnBackPressedCallbacks(dispatcher: OnBackPressedDispatcher){
+        dispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                parentFragmentManager.beginTransaction().replace(R.id.fragmentContainer, WelcomeFragment()).commit()
+            }
+        })
+    }
+
+    override fun getViewBinding(inflater: LayoutInflater): FragmentSignInBinding {
+        return FragmentSignInBinding.inflate(inflater)
+    }
+
+    override fun observeData() {
+        super.observeData()
+//        TODO requireContext
+        val context = requireContext()
+        viewModel.signInFormState.observe(viewLifecycleOwner) {
+            binding.emailLayout.error = it.emailError?.asString(context)
+            binding.signInPasswordLayout.error = it.passwordError?.asString(context)
+        }
+
+        viewModel.loggedIn.observe(viewLifecycleOwner) {
+            if (it is Resource.Success) {
+                (activity as MainActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, BottomNavigationFragment()).commit()
+            }
+        }
+    }
 
 }

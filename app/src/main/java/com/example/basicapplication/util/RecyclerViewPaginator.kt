@@ -1,66 +1,50 @@
 package com.example.basicapplication.util
 
+
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE
 
 
-abstract class RecyclerViewPaginator(recyclerView: RecyclerView) : RecyclerView.OnScrollListener() {
+abstract class RecyclerViewPaginator : RecyclerView.OnScrollListener() {
+
     private var currentPage = 1
     private var endWithAuto = false
 
 
-    private var layoutManager: RecyclerView.LayoutManager? = null
+    abstract var isLastPage: Boolean
+    abstract var isLoading: Boolean
 
-
-    private val startPage: Int
-        get() = ++currentPage
-
-
-    abstract val isLastPage: Boolean
-
-
-    init {
-        recyclerView.addOnScrollListener(this)
-        layoutManager = recyclerView.layoutManager
-    }
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         super.onScrollStateChanged(recyclerView, newState)
-        if (newState == SCROLL_STATE_IDLE) {
+        val layoutManager = recyclerView.layoutManager
+        val visibleItemCount = layoutManager!!.childCount
+        val totalItemCount = layoutManager.itemCount
 
-
-            val visibleItemCount = layoutManager!!.childCount
-            val totalItemCount = layoutManager!!.itemCount
-
-            val firstVisiblePosition: Int = when (layoutManager) {
-                is GridLayoutManager -> (layoutManager as GridLayoutManager).findLastVisibleItemPosition()
-                is LinearLayoutManager -> (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-                else -> 0
-            }
-
-            if (isLastPage) {
-                return
-            }
-
-
-            if (visibleItemCount + firstVisiblePosition >= totalItemCount) {
-                if (!endWithAuto) {
-                    endWithAuto = true
-                    loadMore(startPage)
-                } else {
-                    endWithAuto = false
-                }
-            }
-            else{
-                endWithAuto = false
-            }
+        val lastVisiblePosition: Int = when (layoutManager) {
+            is GridLayoutManager -> layoutManager.findLastVisibleItemPosition()
+            else -> (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
         }
-    }
 
-    fun reset() {
-        currentPage = 0
+        if (isLastPage) {
+            return
+        }
+
+        if(isLoading){
+            return
+        }
+
+
+        if (visibleItemCount + lastVisiblePosition >= totalItemCount) {
+            if (!endWithAuto) {
+                endWithAuto = true
+                loadMore(++currentPage)
+            }
+        } else {
+            endWithAuto = false
+        }
+
     }
 
     abstract fun loadMore(start: Int)

@@ -24,11 +24,15 @@
     <string name="signin">Sign In</string>
     <string name="signup">Sign Up</string>
 
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Password</string>
-    <string name="username_hint">User Name</string>
+
+    <string name="password">Password</string>
+
+
+    <string name="email_hint">Email<font fgcolor='#FFFF0000'>*</font></string>
+    <string name="password_hint">Password<font fgcolor='#FFFF0000'>*</font></string>
+    <string name="username_hint">User Name<font fgcolor='#FFFF0000'>*</font></string>
     <string name="birthday_hint">Birthday</string>
-    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="confirm_password_hint">Confirm Password<font fgcolor='#FFFF0000'>*</font></string>
 
     <string name="back_button">Back</string>
 
@@ -50,5 +54,15 @@
     <string name="username_in_use_error">Username is already in use</string>
     <string name="email_in_use_error">Email is already in use</string>
     <string name="invalid_credentials">Invalid credentials</string>
+    <string name="personal_data">Personal Data</string>
+    <string name="e_mail_address">E-mail address</string>
+    <string name="upload_photo">Upload photo</string>
+    <string name="save">Save</string>
+    <string name="old_password">Old password</string>
+    <string name="you_can">You can</string>
+    <string name="delete_your_account">delete your account</string>
+    <string name="sign_out">Sign out</string>
+    <string name="card_view">Card view</string>
+    <string name="search">Search</string>
 
 </resources>

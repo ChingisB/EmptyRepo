@@ -1,46 +1,40 @@
 package com.example.basicapplication.ui.photo_details
 
-import android.os.Bundle
+
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.basicapplication.SharedPhotoViewModel
 import com.example.basicapplication.data.data_source.api.Config
 import com.example.basicapplication.databinding.FragmentPhotoDetailsBinding
+import com.example.basicapplication.util.BaseFragment
 
 
-class PhotoDetailsFragment : Fragment() {
+class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, SharedPhotoViewModel>() {
+
+    override lateinit var binding: FragmentPhotoDetailsBinding
+    override val viewModel: SharedPhotoViewModel by activityViewModels()
 
 
-    private lateinit var binding: FragmentPhotoDetailsBinding
-
-
-    val viewModel: SharedPhotoViewModel by activityViewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentPhotoDetailsBinding.inflate(inflater)
-
-        viewModel.photoLiveData.observe(viewLifecycleOwner) {
-            binding.apply {
-                photoName.text = it.name
-                description.text = it.description
-                postDate.text = it.dateCreate
-                Glide.with(image).load(Config.mediaUrl + it.image?.name).into(image)
-            }
-        }
-
+    override fun setupListeners() {
+        super.setupListeners()
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+    }
 
+    override fun observeData() {
+        super.observeData()
+        viewModel.photoLiveData.observe(viewLifecycleOwner) {
+            binding.photoName.text = it.name
+            binding.description.text = it.description
+            binding.postDate.text = it.dateCreate
+            Glide.with(binding.image).load(Config.mediaUrl + it.image?.name).into(binding.image)
+        }
+    }
 
-        return binding.root
+    override fun getViewBinding(inflater: LayoutInflater): FragmentPhotoDetailsBinding {
+        return FragmentPhotoDetailsBinding.inflate(inflater)
     }
 
 }

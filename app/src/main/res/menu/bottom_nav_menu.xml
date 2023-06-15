@@ -3,16 +3,19 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home"
+        android:iconTint="@color/grey"
         android:title="@string/home_navigation" />
 
     <item
         android:id="@+id/navigation_make"
         android:icon="@drawable/ic_camera"
+        android:iconTint="@color/grey"
         android:title="@string/make_navigation" />
 
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_profile"
+        android:iconTint="@color/grey"
         android:title="@string/profile_navigation" />
 
 </menu>

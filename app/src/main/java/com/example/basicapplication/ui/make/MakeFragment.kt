@@ -1,21 +1,21 @@
 package com.example.basicapplication.ui.make
 
-import android.os.Bundle
+
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.basicapplication.R
+import androidx.fragment.app.viewModels
+import com.example.basicapplication.databinding.FragmentMakeBinding
+import com.example.basicapplication.util.BaseFragment
 
 
-class MakeFragment : Fragment() {
+class MakeFragment : BaseFragment<FragmentMakeBinding, MakeViewModel>() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_make, container, false)
+
+    override lateinit var binding: FragmentMakeBinding
+    override val viewModel: MakeViewModel by viewModels()
+
+
+    override fun getViewBinding(inflater: LayoutInflater): FragmentMakeBinding {
+        return FragmentMakeBinding.inflate(inflater)
     }
 
 }

@@ -1,6 +1,5 @@
 package com.example.basicapplication.ui.sign_in
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,9 +12,9 @@ import com.example.basicapplication.model.retrofit_model.AuthResponse
 import com.example.basicapplication.model.retrofit_model.CreateUser
 import com.example.basicapplication.model.retrofit_model.User
 import com.example.basicapplication.ui.ui_text.UiText
+import com.example.basicapplication.util.BaseViewModel
+import com.example.basicapplication.util.Constants
 import com.example.basicapplication.util.Resource
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
 import javax.inject.Inject
 
 class SignInViewModel(
@@ -23,132 +22,78 @@ class SignInViewModel(
     private val validateEmail: ValidateEmailUseCase,
     private val validatePassword: ValidatePasswordUseCase
 ) :
-    ViewModel() {
+    BaseViewModel() {
 
-
-    private val compositeDisposable = CompositeDisposable()
     private val _signInFormState = MutableLiveData<SignInFormState>()
     private val _loggedIn = MutableLiveData<Resource<Boolean>>()
-    val loggedIn: LiveData<Resource<Boolean>>
-        get() = _loggedIn
-    val signInFormState: LiveData<SignInFormState>
-        get() = _signInFormState
+    val loggedIn: LiveData<Resource<Boolean>> = _loggedIn
+    val signInFormState: LiveData<SignInFormState> = _signInFormState
 
 
     fun onEvent(event: SignInFormEvent) {
         val formState = _signInFormState.value ?: SignInFormState()
         when (event) {
             is SignInFormEvent.EmailChanged -> _signInFormState.postValue(
-                formState.copy(
-                    email = event.email,
-                    emailError = null
-                )
+                formState.copy(email = event.email, emailError = null)
             )
             is SignInFormEvent.PasswordChanged -> _signInFormState.postValue(
-                formState.copy(
-                    password = event.password,
-                    passwordError = null
-                )
+                formState.copy(password = event.password, passwordError = null)
             )
-            is SignInFormEvent.Submit -> submit()
+            is SignInFormEvent.Submit -> submitSignInForm()
         }
     }
 
-    private fun submit() {
+//      TODO naming
+    private fun submitSignInForm() {
         var formState = _signInFormState.value ?: SignInFormState()
         val emailResult = validateEmail(formState.email)
         val passwordResult = validatePassword(formState.password)
 
         val hasError = listOf(emailResult, passwordResult).any { !it.success }
         if (hasError) {
-            formState = formState.copy(
-                emailError = emailResult.errorMessage,
-                passwordError = passwordResult.errorMessage
-            )
+            formState = formState.copy(emailError = emailResult.errorMessage, passwordError = passwordResult.errorMessage)
             _signInFormState.postValue(formState)
-        } else {
-            login(formState.email, formState.password)
+            return
         }
+        signIn(formState.email, formState.password)
     }
 
-    fun login(email: String, password: String) {
-        val disposable = authenticationRepository.login(email, password).subscribeWith(object :
-            DisposableSingleObserver<AuthResponse>() {
-            override fun onStart() {
-                super.onStart()
-                _loggedIn.postValue(Resource.Loading())
-            }
-
-            override fun onSuccess(t: AuthResponse) {
-                saveAccessToken(t.accessToken)
-                saveRefreshToken(t.refreshToken)
-            }
-
-            override fun onError(e: Throwable) {
-                _loggedIn.postValue(Resource.Error(data = false, message = e.message.toString()))
-                val formState = _signInFormState.value ?: SignInFormState()
-                _signInFormState.postValue(
-                    formState.copy(
-                        emailError = UiText.StringResource(R.string.invalid_credentials),
-                        passwordError = UiText.StringResource(R.string.invalid_credentials)
+    private fun signIn(email: String, password: String) {
+        authenticationRepository.signIn(email, password)
+            .doOnSubscribe { _loggedIn.postValue(Resource.Loading()) }
+            .subscribe(
+                {saveTokens(it)},
+                {error ->
+                    _loggedIn.postValue(Resource.Error(data = false, message = error.message.toString()))
+                    val formState = _signInFormState.value ?: SignInFormState()
+                    _signInFormState.postValue(
+                        formState.copy(
+                            emailError = UiText.StringResource(R.string.invalid_credentials),
+                            passwordError = UiText.StringResource(R.string.invalid_credentials)
+                        )
                     )
-                )
-                e.printStackTrace()
-            }
-        })
-        compositeDisposable.add(disposable)
+                    error.printStackTrace()})
+            .let(compositeDisposable::add)
+//  TODO remove object
+//                TODO
     }
 
-    fun saveAccessToken(token: String) {
-        val disposable = authenticationRepository.saveAccessToken(token).subscribe(
-            {
-                _loggedIn.postValue(Resource.Success(true))
-            },
-            { error ->
-                _loggedIn.postValue(
-                    Resource.Error(
-                        data = false,
-                        message = error.message.toString()
-                    )
-                )
-            })
-        compositeDisposable.add(disposable)
+    private fun saveTokens(authResponse: AuthResponse){
+        authenticationRepository.saveTokens(authResponse).subscribe(
+            {_loggedIn.postValue(Resource.Success(true))},
+            {error -> _loggedIn.postValue(Resource.Error(data = false, message = error.message.toString()))}
+        ).let(compositeDisposable::add)
     }
-
-    fun saveRefreshToken(token: String) {
-        val disposable = authenticationRepository.saveRefreshToken(token).subscribe(
-            {
-                _loggedIn.postValue(Resource.Success(true))
-            },
-            { error ->
-                _loggedIn.postValue(
-                    Resource.Error(
-                        data = false,
-                        message = error.message.toString()
-                    )
-                )
-            })
-        compositeDisposable.add(disposable)
-    }
-
 
     class Factory @Inject constructor(
         private val authenticationRepository: AuthenticationRepository<User, CreateUser, AuthResponse>,
         private val validateEmail: ValidateEmailUseCase,
         private val validatePassword: ValidatePasswordUseCase
-    ) :
-        ViewModelProvider.Factory {
+    ) : ViewModelProvider.Factory {
 
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(SignInViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return SignInViewModel(
-                    authenticationRepository,
-                    validateEmail,
-                    validatePassword
-                ) as T
-            }
-            throw IllegalArgumentException("UNKNOWN VIEW MODEL CLASS")
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching{
+            @Suppress("UNCHECKED_CAST")
+            return SignInViewModel(authenticationRepository, validateEmail, validatePassword) as T
+        }.getOrElse { error(Constants.unknownViewModelClassError) }
     }
 }

@@ -8,17 +8,17 @@ import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
 class TokenViewModel(
-    private val preferences: SharedPreferences
+    sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
 
     private val _tokenLiveData = MutableLiveData<String?>()
-    val tokenLiveData: LiveData<String?>
-        get() = _tokenLiveData
+    val tokenLiveData: LiveData<String?> = _tokenLiveData
 
     init {
-        _tokenLiveData.postValue(preferences.getString("RefreshToken", null))
-        preferences.registerOnSharedPreferenceChangeListener { preferences, key ->
+//        TODO move to cons
+        _tokenLiveData.postValue(sharedPreferences.getString("RefreshToken", null))
+        sharedPreferences.registerOnSharedPreferenceChangeListener { preferences, key ->
             if(key == "RefreshToken"){
                 _tokenLiveData.postValue(preferences.getString(key, null))
             }
@@ -35,6 +35,7 @@ class TokenViewModel(
                 @Suppress("UNCHECKED_CAST")
                 return TokenViewModel(preferences) as T
             }
+            //        TODO move to cons
             throw IllegalArgumentException("UNKNOWN VIEW MODEL CLASS")
         }
     }

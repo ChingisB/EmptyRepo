@@ -1,6 +1,6 @@
 package com.example.basicapplication.data.repository.authentication_repository
 
-import com.example.basicapplication.data.data_source.api.TokenManager
+import com.example.basicapplication.data.repository.token_repository.TokenRepository
 import com.example.basicapplication.data.data_source.api.service.AuthenticationService
 import com.example.basicapplication.model.retrofit_model.AuthResponse
 import com.example.basicapplication.model.retrofit_model.CreateUser
@@ -12,36 +12,24 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AuthenticationRepositoryImpl @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val tokenRepository: TokenRepository,
     private val authenticationService: AuthenticationService
-) :
-    AuthenticationRepository<User, CreateUser, AuthResponse> {
+) : AuthenticationRepository<User, CreateUser, AuthResponse> {
 
 
-    override fun login(username: String, password: String): Single<AuthResponse> =
+    override fun signIn(username: String, password: String): Single<AuthResponse> =
         authenticationService.login(username = username, password = password)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
-
-    override fun saveAccessToken(token: String): Completable =
-        Completable.fromAction { tokenManager.saveAccessToken(token) }
-
-
-    override fun saveRefreshToken(token: String): Completable =
-        Completable.fromAction { tokenManager.saveRefreshToken(token)}
-
-    override fun getByID(id: Int): Single<User> {
-        TODO("Not yet implemented")
-    }
-
-    override fun create(item: CreateUser): Single<User> =
-        authenticationService.signUp(item).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    override fun saveTokens(auth: AuthResponse): Completable =
+        saveAccessToken(auth.accessToken).andThen(saveRefreshToken(auth.refreshToken))
 
 
-    override fun delete(id: Int): Completable =
-        authenticationService.deleteUser(id).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    override fun saveAccessToken(token: String): Completable = Completable.fromAction { tokenRepository.saveAccessToken(token) }
 
+    override fun saveRefreshToken(token: String): Completable = Completable.fromAction { tokenRepository.saveRefreshToken(token) }
+
+    override fun signUp(item: CreateUser): Single<User> =
+        authenticationService.signUp(item).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
 }

@@ -4,42 +4,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.basicapplication.data.data_source.api.service.UserService
+import com.example.basicapplication.data.repository.user_repository.UserRepository
+import com.example.basicapplication.model.retrofit_model.UpdatePassword
+import com.example.basicapplication.model.retrofit_model.UpdateUser
 import com.example.basicapplication.model.retrofit_model.User
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import com.example.basicapplication.util.BaseViewModel
+import com.example.basicapplication.util.Constants
 import javax.inject.Inject
 
-class ProfileViewModel(private val userService: UserService) : ViewModel() {
+class ProfileViewModel(private val userRepository: UserRepository<User, UpdateUser, UpdatePassword>) :
+    BaseViewModel() {
 
-
-    private val compositeDisposable = CompositeDisposable()
     private val _userLiveData = MutableLiveData<User>()
     val userLiveData: LiveData<User>
         get() = _userLiveData
 
 
-    fun getUser() {
-        val disposable = userService.getCurrentUser().observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
+    init {
+        getUser()
+    }
+
+    private fun getUser() {
+        val disposable = userRepository.getCurrentUser()
             .subscribe({ value -> _userLiveData.postValue(value) },
                 { error -> error.printStackTrace() })
 
         compositeDisposable.add(disposable)
     }
 
-
-    class Factory @Inject constructor(private val userService: UserService) :
+    class Factory @Inject constructor(private val userRepository: UserRepository<User, UpdateUser, UpdatePassword>) :
         ViewModelProvider.Factory {
 
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return ProfileViewModel(userService) as T
-            }
-            throw IllegalArgumentException("UNKNOWN VIEW MODEL CLASS")
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
+            @Suppress("UNCHECKED_CAST")
+            return ProfileViewModel(userRepository) as T
+        }.getOrElse { error(Constants.unknownViewModelClassError) }
+
     }
 
 }
