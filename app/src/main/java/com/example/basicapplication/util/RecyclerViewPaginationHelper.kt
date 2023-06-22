@@ -4,16 +4,15 @@ package com.example.basicapplication.util
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.Integer.max
 
 
-abstract class RecyclerViewPaginator : RecyclerView.OnScrollListener() {
+class RecyclerViewPaginationHelper(private val loadMore: () -> Unit) : RecyclerView.OnScrollListener() {
 
-    private var currentPage = 1
     private var endWithAuto = false
-
-
-    abstract var isLastPage: Boolean
-    abstract var isLoading: Boolean
+    private var threshold = 1
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
 
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -23,29 +22,23 @@ abstract class RecyclerViewPaginator : RecyclerView.OnScrollListener() {
         val totalItemCount = layoutManager.itemCount
 
         val lastVisiblePosition: Int = when (layoutManager) {
-            is GridLayoutManager -> layoutManager.findLastVisibleItemPosition()
+            is GridLayoutManager -> {
+                threshold = max(layoutManager.spanCount, 1)
+                layoutManager.findLastVisibleItemPosition()
+            }
             else -> (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
         }
 
-        if (isLastPage) {
-            return
-        }
+        if (isLastPage || isLoading) return
 
-        if(isLoading){
-            return
-        }
-
-
-        if (visibleItemCount + lastVisiblePosition >= totalItemCount) {
-            if (!endWithAuto) {
-                endWithAuto = true
-                loadMore(++currentPage)
-            }
-        } else {
-            endWithAuto = false
-        }
-
+        if (visibleItemCount + lastVisiblePosition + threshold >= totalItemCount && !endWithAuto) {
+            endWithAuto = true
+            loadMore()
+        } else endWithAuto = false
     }
 
-    abstract fun loadMore(start: Int)
+    fun reset() {
+        isLastPage = false
+        loadMore.invoke()
+    }
 }
