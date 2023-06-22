@@ -7,13 +7,13 @@ import javax.inject.Inject
 class TokenRepositoryImpl @Inject constructor(private val preferences: SharedPreferences): TokenRepository {
 
 
-    override fun getAccessToken() = preferences.getString(Constants.accessTokenKey, null)
+    override fun getAccessToken() = preferences.getString(Constants.ACCESS_TOKEN_KEY, null)
 
-    override fun getRefreshToken() =  preferences.getString(Constants.refreshTokenKey, null)
+    override fun getRefreshToken() =  preferences.getString(Constants.REFRESH_TOKEN_KEY, null)
 
-    override fun saveAccessToken(token: String) = preferences.edit().putString(Constants.accessTokenKey, token).apply()
+    override fun saveAccessToken(token: String) = preferences.edit().putString(Constants.ACCESS_TOKEN_KEY, token).apply()
 
-    override fun saveRefreshToken(token: String) = preferences.edit().putString(Constants.refreshTokenKey, token).apply()
+    override fun saveRefreshToken(token: String) = preferences.edit().putString(Constants.REFRESH_TOKEN_KEY, token).apply()
 
     override fun saveTokens(accessToken: String, refreshToken: String) {
         saveAccessToken(accessToken)
@@ -25,8 +25,8 @@ class TokenRepositoryImpl @Inject constructor(private val preferences: SharedPre
         deleteRefreshToken()
     }
 
-    override fun deleteAccessToken() = preferences.edit().remove(Constants.accessTokenKey).apply()
+    override fun deleteAccessToken() = preferences.edit().remove(Constants.ACCESS_TOKEN_KEY).apply()
 
-    override fun deleteRefreshToken() = preferences.edit().remove(Constants.refreshTokenKey).apply()
+    override fun deleteRefreshToken() = preferences.edit().remove(Constants.REFRESH_TOKEN_KEY).apply()
 
 }

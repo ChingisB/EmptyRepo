@@ -1,38 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:orientation="vertical"
+    <SearchView
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="16dp">
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_bar"
+        android:layout_marginTop="10dp"
+        android:queryHint="@string/search" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView3"
-            android:name="com.example.basicapplication.ui.search.SearchFragment"
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:layout_marginTop="15dp"
-            tools:layout="@layout/fragment_search"/>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/bottom_navigation"
+        app:tabIndicatorColor="@color/dark_pink"
+        app:tabSelectedTextColor="@color/black" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/bottom_navigation"
-            app:tabSelectedTextColor="@color/black"
-            app:tabIndicatorColor="@color/dark_pink" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_weight="1"/>
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-</FrameLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

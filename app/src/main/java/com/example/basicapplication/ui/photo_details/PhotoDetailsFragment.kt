@@ -1,26 +1,22 @@
 package com.example.basicapplication.ui.photo_details
 
 
-import android.view.LayoutInflater
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.basicapplication.SharedPhotoViewModel
 import com.example.basicapplication.data.data_source.api.Config
 import com.example.basicapplication.databinding.FragmentPhotoDetailsBinding
-import com.example.basicapplication.util.BaseFragment
+import com.example.basicapplication.base.BaseFragment
 
 
 class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, SharedPhotoViewModel>() {
 
-    override lateinit var binding: FragmentPhotoDetailsBinding
     override val viewModel: SharedPhotoViewModel by activityViewModels()
-
 
     override fun setupListeners() {
         super.setupListeners()
-        binding.backButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
+        binding.backButton.setOnClickListener { parentFragmentManager.popBackStack() }
+        binding.rootLayout.setOnClickListener{}
     }
 
     override fun observeData() {
@@ -29,12 +25,10 @@ class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, SharedPho
             binding.photoName.text = it.name
             binding.description.text = it.description
             binding.postDate.text = it.dateCreate
-            Glide.with(binding.image).load(Config.mediaUrl + it.image?.name).into(binding.image)
+            Glide.with(binding.image).load(Config.MEDIA_URL + it.image?.name).into(binding.image)
         }
     }
 
-    override fun getViewBinding(inflater: LayoutInflater): FragmentPhotoDetailsBinding {
-        return FragmentPhotoDetailsBinding.inflate(inflater)
-    }
+    override fun getViewBinding() = FragmentPhotoDetailsBinding.inflate(layoutInflater)
 
 }

@@ -7,12 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.basicapplication.R
 import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepository
 import com.example.basicapplication.domain.use_case.*
-import com.example.basicapplication.model.retrofit_model.AuthResponse
-import com.example.basicapplication.model.retrofit_model.CreateUser
-import com.example.basicapplication.model.retrofit_model.SignUpError
-import com.example.basicapplication.model.retrofit_model.User
+import com.example.basicapplication.data.model.CreateUser
+import com.example.basicapplication.data.model.NetworkError
 import com.example.basicapplication.ui.ui_text.UiText
-import com.example.basicapplication.util.BaseViewModel
+import com.example.basicapplication.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import com.example.basicapplication.util.Resource
 import com.google.gson.Gson
@@ -20,7 +18,7 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 class SignUpViewModel(
-    private val authenticationRepository: AuthenticationRepository<User, CreateUser, AuthResponse>,
+    private val authenticationRepository: AuthenticationRepository,
     private val validateUsername: ValidateUsernameUseCase,
     private val validateBirthday: ValidateBirthdayUseCase,
     private val validateEmail: ValidateEmailUseCase,
@@ -38,7 +36,11 @@ class SignUpViewModel(
     val signUpFormState: LiveData<SignUpFormState> = _signUpFormLiveState
 
 
-    fun onEvent(event: SignUpFormEvent) {
+    fun submitEvent(event: SignUpFormEvent){
+        onEvent(event)
+    }
+
+    private fun onEvent(event: SignUpFormEvent) {
         val formState = signUpFormState.value ?: SignUpFormState()
         when (event) {
             is SignUpFormEvent.UsernameChanged -> _signUpFormLiveState.postValue(
@@ -60,7 +62,6 @@ class SignUpViewModel(
         }
     }
 
-    //    TODO naming
     private fun submitSignUpForm() {
         var formState = _signUpFormLiveState.value ?: SignUpFormState()
         val usernameResult = validateUsername.invoke(formState.username)
@@ -113,7 +114,7 @@ class SignUpViewModel(
                     var message: String = error.message.toString()
                     if (error is HttpException) {
                         val body = error.response()?.errorBody()?.string()
-                        val adapter = Gson().getAdapter(SignUpError::class.java)
+                        val adapter = Gson().getAdapter(NetworkError::class.java)
                         val errorResponse = adapter.fromJson(body.toString())
                         message = errorResponse.detail
                         val formState = _signUpFormLiveState.value ?: SignUpFormState()
@@ -128,12 +129,10 @@ class SignUpViewModel(
                     }
                     _signedUp.postValue(Resource.Error(message = message))
                 }).let(compositeDisposable::add)
-//            TODO .doOnSubscribe {  }
-
     }
 
     class Factory @Inject constructor(
-        private val authenticationRepository: AuthenticationRepository<User, CreateUser, AuthResponse>,
+        private val authenticationRepository: AuthenticationRepository,
         private val validateUsername: ValidateUsernameUseCase,
         private val validateBirthday: ValidateBirthdayUseCase,
         private val validateEmail: ValidateEmailUseCase,
@@ -156,6 +155,6 @@ class SignUpViewModel(
                 convertLocalDate,
                 parseLocalDate
             ) as T
-        }.getOrElse { error(Constants.unknownViewModelClassError) }
+        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
     }
 }

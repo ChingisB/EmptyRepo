@@ -1,23 +1,21 @@
 package com.example.basicapplication.data.repository.photo_repository
 
-import com.example.basicapplication.model.base_model.CreatePhotoInterface
-import com.example.basicapplication.model.base_model.PhotoInterface
+
+import android.net.Uri
+import com.example.basicapplication.data.model.Photo
 import io.reactivex.Completable
 import io.reactivex.Single
 
 
-interface PhotoRepository<T: PhotoInterface, R: CreatePhotoInterface> {
+interface PhotoRepository {
 
+    fun getPhotos(page: Int, query: String?, new: Boolean, popular: Boolean): Single<List<Photo>>
 
-    fun getNewPhotos(page: Int, query: String = ""): Single<List<T>>
+    fun getByID(id: Int): Single<Photo>
 
-    fun getPopularPhotos(page: Int, query: String = ""): Single<List<T>>
-
-    fun getByID(id: Int): Single<T>
-
-    fun create(item: R):  Single<T>
+    fun create(name: String, description: String, imageUri: Uri, new: Boolean, popular: Boolean):  Single<Photo>?
 
     fun delete(id: Int): Completable
 
-    fun getUserPhotos(userId: Int): Single<List<T>>
+    fun getUserPhotos(userId: Int, page: Int): Single<List<Photo>>
 }

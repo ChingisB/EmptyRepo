@@ -12,37 +12,11 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var tokenViewModelFactory: TokenViewModel.Factory
-
-
-    lateinit var binding: ActivityMainBinding
-
-
-    private val tokenViewModel by viewModels<TokenViewModel> { tokenViewModelFactory }
-
+    val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        TODO make binding lazy
-        binding = ActivityMainBinding.inflate(layoutInflater)
-
-        MainApplication.appComponent.inject(this)
-
-        tokenViewModel.tokenLiveData.observe(this) { token ->
-            when (token) {
-                null -> {}
-                else ->{
-                    supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, BottomNavigationFragment()).commit()
-                }
-            }
-        }
-
-
         setContentView(binding.root)
-
 
     }
 

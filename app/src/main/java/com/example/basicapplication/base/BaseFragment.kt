@@ -1,4 +1,4 @@
-package com.example.basicapplication.util
+package com.example.basicapplication.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.viewbinding.ViewBinding
 abstract class BaseFragment<VBinding: ViewBinding, ViewModel: BaseViewModel>: Fragment(){
 
     protected abstract val viewModel: ViewModel
-    protected abstract var binding: VBinding
+    protected val binding: VBinding by lazy { getViewBinding() }
 
 
     override fun onCreateView(
@@ -19,26 +19,21 @@ abstract class BaseFragment<VBinding: ViewBinding, ViewModel: BaseViewModel>: Fr
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = getViewBinding(inflater)
         setupViews()
+        observeData()
         setupListeners()
         addOnBackPressedCallbacks(requireActivity().onBackPressedDispatcher)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeData()
-    }
+    protected open fun setupListeners() = Unit
 
-    protected open fun setupListeners() {}
+    protected open fun setupViews() = Unit
 
-    protected open fun setupViews() {}
+    protected open fun observeData() = Unit
 
-    protected open fun observeData() {}
+    protected open fun addOnBackPressedCallbacks(dispatcher: OnBackPressedDispatcher) = Unit
 
-    protected open fun addOnBackPressedCallbacks(dispatcher: OnBackPressedDispatcher) {}
-
-    protected abstract fun getViewBinding(inflater: LayoutInflater): VBinding
+    protected abstract fun getViewBinding(): VBinding
 
 }

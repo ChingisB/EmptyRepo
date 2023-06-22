@@ -10,7 +10,6 @@ import com.example.basicapplication.data.repository.photo_repository.PhotoReposi
 import com.example.basicapplication.data.repository.photo_repository.PhotoRepositoryImpl
 import com.example.basicapplication.data.repository.user_repository.UserRepository
 import com.example.basicapplication.data.repository.user_repository.UserRepositoryImpl
-import com.example.basicapplication.model.retrofit_model.*
 import com.example.basicapplication.util.Constants
 import dagger.Binds
 import dagger.Module
@@ -20,16 +19,13 @@ import dagger.Provides
 interface RepositoryModule {
 
     @Binds
-    fun bindPhotoRepository(photoRepositoryImpl: PhotoRepositoryImpl):
-            PhotoRepository<Photo, CreatePhoto>
+    fun bindPhotoRepository(photoRepositoryImpl: PhotoRepositoryImpl): PhotoRepository
 
     @Binds
-    fun bindAuthRepository(authRepositoryImpl: AuthenticationRepositoryImpl):
-            AuthenticationRepository<User, CreateUser, AuthResponse>
+    fun bindAuthRepository(authRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
     @Binds
-    fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl):
-            UserRepository<User, UpdateUser, UpdatePassword>
+    fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
     @Binds
     fun bindTokenRepository(tokenRepositoryImpl: TokenRepositoryImpl): TokenRepository
@@ -38,7 +34,7 @@ interface RepositoryModule {
     companion object{
         @Provides
         fun provideSharedPreferences(context: Context): SharedPreferences {
-            return context.getSharedPreferences(Constants.preferencesKey, Context.MODE_PRIVATE)
+            return context.getSharedPreferences(Constants.PREFERENCES_KEY, Context.MODE_PRIVATE)
         }
     }
 

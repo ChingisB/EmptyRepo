@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--TODO read <merge-->
-<!--TODO change to frame-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<!--    TODO remove unused attributes and remove root-->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainer"
+        android:id="@+id/activityFragmentContainer"
+        android:name="com.example.basicapplication.ui.welcome.WelcomeFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.example.basicapplication.ui.welcome.WelcomeFragment"
         tools:layout="@layout/fragment_welcome" />
-
 
 </FrameLayout>

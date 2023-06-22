@@ -1,7 +1,6 @@
-package com.example.basicapplication.model.retrofit_model
+package com.example.basicapplication.data.model
 
 
-import com.example.basicapplication.model.base_model.BaseAuthEntity
 import com.google.gson.annotations.SerializedName
 
 data class AuthResponse(
@@ -15,4 +14,4 @@ data class AuthResponse(
     val scope: Any,
     @SerializedName("token_type")
     val tokenType: String
-): BaseAuthEntity
+)

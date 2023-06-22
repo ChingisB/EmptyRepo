@@ -1,7 +1,6 @@
-package com.example.basicapplication.model.retrofit_model
+package com.example.basicapplication.data.model
 
 
-import com.example.basicapplication.model.base_model.CreateUserInterface
 import com.google.gson.annotations.SerializedName
 
 data class  CreateUser(
@@ -10,9 +9,9 @@ data class  CreateUser(
     @SerializedName("confirm_password")
     val confirmPassword: String,
     @SerializedName("email")
-    override val email: String,
+    val email: String,
     @SerializedName("password")
-    override val password: String,
+    val password: String,
     @SerializedName("username")
-    override val username: String
-): CreateUserInterface
+    val username: String
+)

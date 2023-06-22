@@ -4,42 +4,49 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.basicapplication.data.model.Photo
+import com.example.basicapplication.data.model.User
 import com.example.basicapplication.data.repository.user_repository.UserRepository
-import com.example.basicapplication.model.retrofit_model.UpdatePassword
-import com.example.basicapplication.model.retrofit_model.UpdateUser
-import com.example.basicapplication.model.retrofit_model.User
-import com.example.basicapplication.util.BaseViewModel
 import com.example.basicapplication.util.Constants
+import com.example.basicapplication.base.PhotoPagingViewModel
+import com.example.basicapplication.util.Resource
+import io.reactivex.Single
 import javax.inject.Inject
 
-class ProfileViewModel(private val userRepository: UserRepository<User, UpdateUser, UpdatePassword>) :
-    BaseViewModel() {
+class ProfileViewModel(private val userRepository: UserRepository) :
+    PhotoPagingViewModel() {
 
-    private val _userLiveData = MutableLiveData<User>()
-    val userLiveData: LiveData<User>
-        get() = _userLiveData
+    private val _userLiveData = MutableLiveData<Resource<User>>()
+    val userLiveData: LiveData<Resource<User>> = _userLiveData
+    var userId = 1
 
 
     init {
-        getUser()
+        if(userLiveData.value == null){
+            getUser()
+        }
     }
 
     private fun getUser() {
-        val disposable = userRepository.getCurrentUser()
-            .subscribe({ value -> _userLiveData.postValue(value) },
-                { error -> error.printStackTrace() })
+        userRepository.getCurrentUser().doOnSubscribe{_userLiveData.postValue(Resource.Loading())}.subscribe(
+            { _userLiveData.postValue(Resource.Success(it)) },
+            { _userLiveData.postValue(Resource.Error(message = it.message.toString())) }
+        ).let(compositeDisposable::add)
 
-        compositeDisposable.add(disposable)
     }
 
-    class Factory @Inject constructor(private val userRepository: UserRepository<User, UpdateUser, UpdatePassword>) :
+
+    class Factory @Inject constructor(private val userRepository: UserRepository) :
         ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
             @Suppress("UNCHECKED_CAST")
             return ProfileViewModel(userRepository) as T
-        }.getOrElse { error(Constants.unknownViewModelClassError) }
+        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
 
     }
 
+    override fun getDataSource(): Single<List<Photo>> {
+        return userRepository.getUserPhotos(userId, page)
+    }
 }

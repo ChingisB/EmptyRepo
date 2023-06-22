@@ -1,8 +1,8 @@
 package com.example.basicapplication.data.data_source.api.service
 
-import com.example.basicapplication.model.retrofit_model.CreatePhoto
-import com.example.basicapplication.model.retrofit_model.Photo
-import com.example.basicapplication.model.retrofit_model.PhotoResponse
+import com.example.basicapplication.data.model.CreatePhoto
+import com.example.basicapplication.data.model.Photo
+import com.example.basicapplication.data.model.PhotoResponse
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.*
@@ -13,16 +13,9 @@ interface PhotoService {
         @Query("new") new: Boolean? = null,
         @Query("popular") popular: Boolean? = null,
         @Query("page") page: Int? = null,
-        @Query("user.id") userId: Int? = null
+        @Query("user.id") userId: Int? = null,
+        @Query("name") query: String? = null
     ): Single<PhotoResponse>
-
-
-    @GET("api/photos")
-    fun getNewPhotos(@Query("page") page: Int) = getPhotos(new = true, popular = false, page = page)
-
-    @GET("api/photos")
-    fun getPopularPhotos(@Query("page") page: Int) =
-        getPhotos(new = false, popular = true, page = page)
 
     @GET("api/photos/{id}")
     fun getPhoto(@Path("id") id: Int): Single<Photo>

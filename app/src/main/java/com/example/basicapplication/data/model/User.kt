@@ -1,7 +1,6 @@
-package com.example.basicapplication.model.retrofit_model
+package com.example.basicapplication.data.model
 
 
-import com.example.basicapplication.model.base_model.UserInterface
 import com.google.gson.annotations.SerializedName
 
 data class User(
@@ -10,7 +9,7 @@ data class User(
     @SerializedName("accountNonLocked")
     val accountNonLocked: Boolean,
     @SerializedName("birthday")
-    override val birthday: String,
+    val birthday: String,
     @SerializedName("code")
     val code: Any,
     @SerializedName("confirmationToken")
@@ -18,11 +17,11 @@ data class User(
     @SerializedName("credentialsNonExpired")
     val credentialsNonExpired: Boolean,
     @SerializedName("email")
-    override val email: String,
+    val email: String,
     @SerializedName("emailCanonical")
     val emailCanonical: String,
     @SerializedName("enabled")
-    override val enabled: Boolean,
+    val enabled: Boolean,
     @SerializedName("fullName")
     val fullName: Any,
     @SerializedName("groupNames")
@@ -30,7 +29,7 @@ data class User(
     @SerializedName("groups")
     val groups: List<Any>,
     @SerializedName("id")
-    override val id: Int,
+    val id: Int,
     @SerializedName("lastLogin")
     val lastLogin: Any,
     @SerializedName("newPassword")
@@ -48,7 +47,7 @@ data class User(
     @SerializedName("plainPassword")
     val plainPassword: Any,
     @SerializedName("roles")
-    override val roles: List<String>,
+    val roles: List<String>,
     @SerializedName("salt")
     val salt: Any,
     @SerializedName("superAdmin")
@@ -56,7 +55,7 @@ data class User(
     @SerializedName("user")
     val user: Boolean,
     @SerializedName("username")
-    override val username: String,
+    val username: String,
     @SerializedName("usernameCanonical")
     val usernameCanonical: String
-): UserInterface
+)

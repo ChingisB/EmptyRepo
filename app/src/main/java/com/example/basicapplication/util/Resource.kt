@@ -1,6 +1,7 @@
 package com.example.basicapplication.util
 
 
+//TODO refactor
 sealed class Resource<T>(
     val data: T? = null,
     val message: String? = null

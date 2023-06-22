@@ -11,7 +11,7 @@ class TokenInterceptor @Inject constructor(private val tokenRepository: TokenRep
         val token = tokenRepository.getAccessToken()
         val request = chain.request().newBuilder()
         if(token != null) {
-            request.addHeader(Constants.authorizationHeader, "${Constants.authorizationType} $token")
+            request.addHeader(Constants.AUTHORIZATION_HEADER, "${Constants.AUTHORIZATION_TYPE} $token")
         }
         return chain.proceed(request.build())
     }

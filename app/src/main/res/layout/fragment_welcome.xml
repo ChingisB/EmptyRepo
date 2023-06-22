@@ -1,59 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <ScrollView
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
-        <!--TODO linear-->
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="136dp"
+            android:layout_height="139dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/ic_logo" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/welcomeText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginTop="40dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/welcome"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="25sp" />
 
-            <!--        TODO appcompat-->
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageView"
-                android:layout_width="136dp"
-                android:layout_height="139dp"
-                android:contentDescription="@string/logo"
-                android:src="@drawable/ic_logo" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/navigateToSignup"
+            android:layout_width="320dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/create_account_button"
+            android:background="@drawable/black_button"
+            style="@style/filledButtonStyle"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/welcomeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/welcome"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="25sp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/navigateToSignup"
-                android:layout_width="320dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="40dp"
-                android:background="@drawable/black_button"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/create_account_button"
-                android:textAllCaps="false"
-                android:textColor="@color/white" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/navigateToSignin"
-                android:layout_width="320dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/outlined_button"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/account_exists_button"
-                android:textAllCaps="false"
-                android:textColor="@color/black" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </ScrollView>
-</FrameLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/navigateToSignin"
+            android:layout_width="320dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/outlined_button"
+            android:text="@string/account_exists_button"
+            style="@style/outlinedButtonStyle"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>

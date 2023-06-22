@@ -1,8 +1,8 @@
 package com.example.basicapplication.data.data_source.api.service
 
-import com.example.basicapplication.model.retrofit_model.UpdatePassword
-import com.example.basicapplication.model.retrofit_model.UpdateUser
-import com.example.basicapplication.model.retrofit_model.User
+import com.example.basicapplication.data.model.UpdatePassword
+import com.example.basicapplication.data.model.UpdateUser
+import com.example.basicapplication.data.model.User
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.Body

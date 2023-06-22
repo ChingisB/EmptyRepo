@@ -9,6 +9,7 @@ import com.example.basicapplication.data.data_source.api.AuthenticatorImpl
 import com.example.basicapplication.data.data_source.api.Config
 import com.example.basicapplication.data.data_source.api.TokenInterceptor
 import com.example.basicapplication.data.data_source.api.service.AuthenticationService
+import com.example.basicapplication.data.data_source.api.service.ImageService
 import com.example.basicapplication.data.data_source.api.service.PhotoService
 import com.example.basicapplication.data.data_source.api.service.UserService
 import dagger.Binds
@@ -73,7 +74,7 @@ interface RetrofitModule {
             gsonConverterFactory: GsonConverterFactory,
             rxJava2CallAdapterFactory: RxJava2CallAdapterFactory
         ): Retrofit {
-            return Retrofit.Builder().baseUrl(Config.apiUrl).client(okHttpClient)
+            return Retrofit.Builder().baseUrl(Config.API_URL).client(okHttpClient)
                 .addConverterFactory(gsonConverterFactory)
                 .addCallAdapterFactory(rxJava2CallAdapterFactory)
                 .build()
@@ -92,6 +93,11 @@ interface RetrofitModule {
         @Provides
         fun provideUserService(retrofit: Retrofit): UserService {
             return retrofit.create(UserService::class.java)
+        }
+
+        @Provides
+        fun provideImageService(retrofit: Retrofit): ImageService{
+            return retrofit.create(ImageService::class.java)
         }
     }
 

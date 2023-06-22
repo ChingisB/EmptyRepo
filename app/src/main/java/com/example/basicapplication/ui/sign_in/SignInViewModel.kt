@@ -8,17 +8,15 @@ import com.example.basicapplication.R
 import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepository
 import com.example.basicapplication.domain.use_case.ValidateEmailUseCase
 import com.example.basicapplication.domain.use_case.ValidatePasswordUseCase
-import com.example.basicapplication.model.retrofit_model.AuthResponse
-import com.example.basicapplication.model.retrofit_model.CreateUser
-import com.example.basicapplication.model.retrofit_model.User
+import com.example.basicapplication.data.model.AuthResponse
 import com.example.basicapplication.ui.ui_text.UiText
-import com.example.basicapplication.util.BaseViewModel
+import com.example.basicapplication.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import com.example.basicapplication.util.Resource
 import javax.inject.Inject
 
 class SignInViewModel(
-    private val authenticationRepository: AuthenticationRepository<User, CreateUser, AuthResponse>,
+    private val authenticationRepository: AuthenticationRepository,
     private val validateEmail: ValidateEmailUseCase,
     private val validatePassword: ValidatePasswordUseCase
 ) :
@@ -30,7 +28,11 @@ class SignInViewModel(
     val signInFormState: LiveData<SignInFormState> = _signInFormState
 
 
-    fun onEvent(event: SignInFormEvent) {
+    fun submitEvent(event: SignInFormEvent){
+        onEvent(event)
+    }
+
+    private fun onEvent(event: SignInFormEvent) {
         val formState = _signInFormState.value ?: SignInFormState()
         when (event) {
             is SignInFormEvent.EmailChanged -> _signInFormState.postValue(
@@ -43,7 +45,6 @@ class SignInViewModel(
         }
     }
 
-//      TODO naming
     private fun submitSignInForm() {
         var formState = _signInFormState.value ?: SignInFormState()
         val emailResult = validateEmail(formState.email)
@@ -64,7 +65,7 @@ class SignInViewModel(
             .subscribe(
                 {saveTokens(it)},
                 {error ->
-                    _loggedIn.postValue(Resource.Error(data = false, message = error.message.toString()))
+                    _loggedIn.postValue(Resource.Error(message = error.message.toString()))
                     val formState = _signInFormState.value ?: SignInFormState()
                     _signInFormState.postValue(
                         formState.copy(
@@ -74,19 +75,17 @@ class SignInViewModel(
                     )
                     error.printStackTrace()})
             .let(compositeDisposable::add)
-//  TODO remove object
-//                TODO
     }
 
     private fun saveTokens(authResponse: AuthResponse){
         authenticationRepository.saveTokens(authResponse).subscribe(
             {_loggedIn.postValue(Resource.Success(true))},
-            {error -> _loggedIn.postValue(Resource.Error(data = false, message = error.message.toString()))}
+            {error -> _loggedIn.postValue(Resource.Error(message = error.message.toString()))}
         ).let(compositeDisposable::add)
     }
 
     class Factory @Inject constructor(
-        private val authenticationRepository: AuthenticationRepository<User, CreateUser, AuthResponse>,
+        private val authenticationRepository: AuthenticationRepository,
         private val validateEmail: ValidateEmailUseCase,
         private val validatePassword: ValidatePasswordUseCase
     ) : ViewModelProvider.Factory {
@@ -94,6 +93,6 @@ class SignInViewModel(
         override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching{
             @Suppress("UNCHECKED_CAST")
             return SignInViewModel(authenticationRepository, validateEmail, validatePassword) as T
-        }.getOrElse { error(Constants.unknownViewModelClassError) }
+        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
     }
 }

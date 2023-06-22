@@ -21,8 +21,8 @@ class AuthenticatorImpl @Inject constructor(
             return response
                 .request()
                 .newBuilder()
-                .removeHeader(Constants.authorizationHeader)
-                .addHeader(Constants.authorizationHeader, "${Constants.authorizationType} ${tokenRepository.getAccessToken()!!}")
+                .removeHeader(Constants.AUTHORIZATION_HEADER)
+                .addHeader(Constants.AUTHORIZATION_HEADER, "${Constants.AUTHORIZATION_TYPE} ${tokenRepository.getAccessToken()!!}")
                 .build()
         return null
     }
