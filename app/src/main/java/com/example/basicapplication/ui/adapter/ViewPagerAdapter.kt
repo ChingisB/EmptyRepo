@@ -5,6 +5,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.basicapplication.ui.photos.PhotosFragment
+import com.example.basicapplication.util.Constants
 
 class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
@@ -12,8 +13,10 @@ class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment{
         val photosFragment = PhotosFragment()
-        if(position == 0) photosFragment.arguments = bundleOf(Pair("new", true), Pair("popular", false))
-        else photosFragment.arguments = bundleOf(Pair("new", false), Pair("popular", true))
+        photosFragment.arguments = when(position){
+            0 -> bundleOf(Pair(Constants.NEW_KEY, true), Pair(Constants.POPULAR_KEY, false))
+            else -> bundleOf(Pair(Constants.NEW_KEY, false), Pair(Constants.POPULAR_KEY, true))
+        }
         return photosFragment
     }
 

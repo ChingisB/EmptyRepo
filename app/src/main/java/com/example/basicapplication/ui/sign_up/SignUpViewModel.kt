@@ -4,15 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.basicapplication.R
-import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepository
-import com.example.basicapplication.domain.use_case.*
-import com.example.basicapplication.data.model.CreateUser
-import com.example.basicapplication.data.model.NetworkError
-import com.example.basicapplication.ui.ui_text.UiText
-import com.example.basicapplication.base.BaseViewModel
+import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
-import com.example.basicapplication.util.Resource
+import com.example.data.api.model.CreateUser
+import com.example.data.api.model.NetworkError
+import com.example.data.repository.authentication_repository.AuthenticationRepository
+import com.example.domain.resource_provider.ResourceProvider
+import com.example.domain.use_case.*
+import com.example.domain.use_case.validation.ValidateBirthdayUseCase
+import com.example.domain.use_case.validation.ValidateConfirmPasswordUseCase
+import com.example.domain.use_case.validation.ValidateEmailUseCase
+import com.example.domain.use_case.validation.ValidatePasswordUseCase
+import com.example.domain.use_case.validation.ValidateUsernameUseCase
+import com.example.util.Resource
 import com.google.gson.Gson
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -25,15 +29,14 @@ class SignUpViewModel(
     private val validatePassword: ValidatePasswordUseCase,
     private val validateConfirmPassword: ValidateConfirmPasswordUseCase,
     private val convertLocalDate: ConvertLocalDateUseCase,
-    private val parseLocalDate: ParseDateUseCase
-) :
-    BaseViewModel() {
+    private val parseLocalDate: ParseDateUseCase,
+    private val resourceProvider: ResourceProvider
+) : BaseViewModel() {
 
     private val _signedUp = MutableLiveData<Resource<Boolean>>()
     val signedUp: LiveData<Resource<Boolean>> = _signedUp
-
-    private val _signUpFormLiveState = MutableLiveData(SignUpFormState())
-    val signUpFormState: LiveData<SignUpFormState> = _signUpFormLiveState
+    private val _signUpFormState = MutableLiveData(SignUpFormState())
+    val signUpFormState: LiveData<SignUpFormState> = _signUpFormState
 
 
     fun submitEvent(event: SignUpFormEvent){
@@ -43,19 +46,19 @@ class SignUpViewModel(
     private fun onEvent(event: SignUpFormEvent) {
         val formState = signUpFormState.value ?: SignUpFormState()
         when (event) {
-            is SignUpFormEvent.UsernameChanged -> _signUpFormLiveState.postValue(
+            is SignUpFormEvent.UsernameChanged -> _signUpFormState.postValue(
                 formState.copy(username = event.username, usernameError = null)
             )
-            is SignUpFormEvent.BirthdayChanged -> _signUpFormLiveState.postValue(
+            is SignUpFormEvent.BirthdayChanged -> _signUpFormState.postValue(
                 formState.copy(birthday = event.birthday, birthdayError = null)
             )
-            is SignUpFormEvent.EmailChanged -> _signUpFormLiveState.postValue(
+            is SignUpFormEvent.EmailChanged -> _signUpFormState.postValue(
                 formState.copy(email = event.email, emailError = null)
             )
-            is SignUpFormEvent.PasswordChanged -> _signUpFormLiveState.postValue(
+            is SignUpFormEvent.PasswordChanged -> _signUpFormState.postValue(
                 formState.copy(password = event.password, passwordError = null)
             )
-            is SignUpFormEvent.ConfirmPasswordChanged -> _signUpFormLiveState.postValue(
+            is SignUpFormEvent.ConfirmPasswordChanged -> _signUpFormState.postValue(
                 formState.copy(confirmPassword = event.confirmPassword, confirmPasswordError = null)
             )
             else -> submitSignUpForm()
@@ -63,7 +66,7 @@ class SignUpViewModel(
     }
 
     private fun submitSignUpForm() {
-        var formState = _signUpFormLiveState.value ?: SignUpFormState()
+        var formState = _signUpFormState.value ?: SignUpFormState()
         val usernameResult = validateUsername.invoke(formState.username)
         val birthdayResult = validateBirthday.invoke(formState.birthday)
         val emailResult = validateEmail.invoke(formState.email)
@@ -86,7 +89,7 @@ class SignUpViewModel(
                 passwordError = passwordResult.errorMessage,
                 confirmPasswordError = confirmPasswordResult.errorMessage
             )
-            _signUpFormLiveState.postValue(formState)
+            _signUpFormState.postValue(formState)
             return
         }
         signUp(
@@ -107,7 +110,7 @@ class SignUpViewModel(
     ) {
         val createUser =
             CreateUser(birthday = birthday, username = username, password = password, confirmPassword = confirmPassword, email = email)
-        authenticationRepository.signUp(createUser).doOnSubscribe { _signedUp.postValue(Resource.Loading()) }
+        authenticationRepository.signUp(createUser).doOnSubscribe { _signedUp.postValue(Resource.Loading) }
             .subscribe(
                 {_signedUp.postValue(Resource.Success(true))},
                 {error ->
@@ -117,13 +120,13 @@ class SignUpViewModel(
                         val adapter = Gson().getAdapter(NetworkError::class.java)
                         val errorResponse = adapter.fromJson(body.toString())
                         message = errorResponse.detail
-                        val formState = _signUpFormLiveState.value ?: SignUpFormState()
+                        val formState = _signUpFormState.value ?: SignUpFormState()
                         if (message.contains("email")) {
-                            _signUpFormLiveState.postValue(formState.copy(emailError = UiText.StringResource(R.string.email_in_use_error)))
+                            _signUpFormState.postValue(formState.copy(emailError = resourceProvider.getMessage("email_in_use_error")))
                         }
                         if (message.contains("username")) {
-                            _signUpFormLiveState.postValue(
-                                formState.copy(usernameError = UiText.StringResource(R.string.username_in_use_error))
+                            _signUpFormState.postValue(
+                                formState.copy(usernameError = resourceProvider.getMessage("username_in_use_error"))
                             )
                         }
                     }
@@ -139,9 +142,9 @@ class SignUpViewModel(
         private val validatePassword: ValidatePasswordUseCase,
         private val validateConfirmPassword: ValidateConfirmPasswordUseCase,
         private val convertLocalDate: ConvertLocalDateUseCase,
-        private val parseLocalDate: ParseDateUseCase
-    ) :
-        ViewModelProvider.Factory {
+        private val parseLocalDate: ParseDateUseCase,
+        private val resourceProvider: ResourceProvider
+    ) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
             @Suppress("UNCHECKED_CAST")
@@ -153,7 +156,8 @@ class SignUpViewModel(
                 validatePassword,
                 validateConfirmPassword,
                 convertLocalDate,
-                parseLocalDate
+                parseLocalDate,
+                resourceProvider
             ) as T
         }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
     }

@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.base.BaseFragment
 import com.example.basicapplication.MainActivity
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
@@ -13,8 +14,7 @@ import com.example.basicapplication.databinding.FragmentSignInBinding
 import com.example.basicapplication.ui.bottom_navigation.BottomNavigationFragment
 import com.example.basicapplication.ui.sign_up.SignUpFragment
 import com.example.basicapplication.ui.welcome.WelcomeFragment
-import com.example.basicapplication.base.BaseFragment
-import com.example.basicapplication.util.Resource
+import com.example.util.Resource
 import javax.inject.Inject
 
 class SignInFragment : BaseFragment<FragmentSignInBinding, SignInViewModel>() {
@@ -29,6 +29,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInViewModel>() {
         MainApplication.appComponent.inject(this)
     }
 
+    override fun getViewBinding() = FragmentSignInBinding.inflate(layoutInflater)
+
     override fun setupListeners() {
         super.setupListeners()
         binding.apply {
@@ -41,8 +43,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInViewModel>() {
         }
     }
 
-    private fun navigateTo(fragment: Fragment) = parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit()
-
     override fun addOnBackPressedCallbacks(dispatcher: OnBackPressedDispatcher){
         dispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
@@ -51,22 +51,22 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInViewModel>() {
         })
     }
 
-    override fun getViewBinding() = FragmentSignInBinding.inflate(layoutInflater)
-
     override fun observeData() {
         super.observeData()
-        val context = requireContext()
-        viewModel.signInFormState.observe(viewLifecycleOwner) {
-            binding.emailLayout.error = it.emailError?.asString(context)
-            binding.signInPasswordLayout.error = it.passwordError?.asString(context)
+        viewModel.signInFormState.observe(viewLifecycleOwner) {formState ->
+            formState.emailError?.let { binding.emailLayout.error = it }
+            formState.passwordError?.let { binding.signInPasswordLayout.error = it }
         }
 
         viewModel.loggedIn.observe(viewLifecycleOwner) {
-            if (it is Resource.Success<*>) {
+            if (it is Resource.Success) {
                 (activity as MainActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.activityFragmentContainer, BottomNavigationFragment()).commit()
             }
         }
     }
+
+    private fun navigateTo(fragment: Fragment) =
+        parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit()
 
 }

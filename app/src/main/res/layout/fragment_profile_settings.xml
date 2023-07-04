@@ -29,6 +29,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginStart="20dp"
+                    android:gravity="start|center_vertical"
                     android:minWidth="48dp"
                     android:minHeight="48dp"
                     android:text="@string/cancel_text" />
@@ -40,6 +41,7 @@
                     android:layout_height="48dp"
                     android:layout_gravity="end"
                     android:layout_marginEnd="20dp"
+                    android:gravity="end|center_vertical"
                     android:text="@string/save" />
             </androidx.appcompat.widget.Toolbar>
 
@@ -80,10 +82,11 @@
             android:textSize="12sp" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_width="343dp"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -98,7 +101,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/usernameLayout"
                 style="@style/outlinedTextFieldStyle"
-                android:layout_width="343dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:endIconDrawable="@drawable/ic_person">
 
@@ -114,7 +117,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/birthdayLayout"
                 style="@style/outlinedTextFieldStyle"
-                android:layout_width="343dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconDrawable="@drawable/ic_calendar">
 
@@ -127,14 +130,6 @@
                     android:hint="@string/birthday_hint" />
             </com.google.android.material.textfield.TextInputLayout>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -149,7 +144,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/emailLayout"
                 style="@style/outlinedTextFieldStyle"
-                android:layout_width="343dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconDrawable="@drawable/ic_mail">
 
@@ -162,17 +157,12 @@
                     android:hint="@string/email_hint"
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
-        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
                 android:layout_marginBottom="20dp"
                 android:fontFamily="@font/roboto_regular"
                 android:text="@string/password"
@@ -181,7 +171,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/oldPasswordLayout"
                 style="@style/outlinedTextFieldStyle"
-                android:layout_width="343dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconMode="password_toggle"
                 app:passwordToggleDrawable="@drawable/visibility_toggle"
@@ -199,7 +189,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/newPasswordLayout"
                 style="@style/outlinedTextFieldStyle"
-                android:layout_width="343dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconMode="password_toggle"
                 app:passwordToggleDrawable="@drawable/visibility_toggle"
@@ -217,7 +207,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/confirmPasswordLayout"
                 style="@style/outlinedTextFieldStyle"
-                android:layout_width="343dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconMode="password_toggle"
                 app:passwordToggleDrawable="@drawable/visibility_toggle"
@@ -225,13 +215,12 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/confirmPassword"
+                    style="@style/editTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/confirm_password_hint"
-                    android:inputType="textPassword"
-                    style="@style/editTextStyle"/>
+                    android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 

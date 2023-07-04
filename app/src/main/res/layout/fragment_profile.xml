@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
 
     <androidx.appcompat.widget.AppCompatImageButton
@@ -12,6 +12,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="end"
+        android:layout_marginEnd="20dp"
         android:background="@null"
         android:contentDescription="@string/settings"
         android:src="@drawable/ic_settings" />
@@ -23,19 +24,21 @@
         android:background="@color/grey" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/avatarCard"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="30dp"
         app:cardCornerRadius="120dp">
 
-        <!--                todo naming-->
+        <!-- todo naming-->
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/avatarImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:contentDescription="@string/photo_avatar"
             android:padding="10dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_logo" />
     </androidx.cardview.widget.CardView>
 
@@ -72,20 +75,31 @@
         android:gravity="center_horizontal|bottom"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/photoGrid"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refreshBar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingTop="20dp"
-            android:paddingHorizontal="16dp"
-            android:layout_weight="1"
-            android:orientation="vertical" />
+            android:layout_weight="1">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/photoGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="20dp" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
         <ProgressBar
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:indeterminateDrawable="@drawable/ic_loading_animation" />
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

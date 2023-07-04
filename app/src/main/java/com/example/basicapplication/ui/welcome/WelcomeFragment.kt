@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
 import com.example.basicapplication.TokenViewModel
@@ -12,9 +13,7 @@ import com.example.basicapplication.databinding.FragmentWelcomeBinding
 import com.example.basicapplication.ui.bottom_navigation.BottomNavigationFragment
 import com.example.basicapplication.ui.sign_in.SignInFragment
 import com.example.basicapplication.ui.sign_up.SignUpFragment
-import com.example.basicapplication.base.BaseFragment
 import javax.inject.Inject
-
 
 class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, WelcomeViewModel>() {
 
@@ -27,6 +26,8 @@ class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, WelcomeViewModel>()
         super.onAttach(context)
         MainApplication.appComponent.inject(this)
     }
+
+    override fun getViewBinding() = FragmentWelcomeBinding.inflate(layoutInflater)
 
     override fun setupListeners() {
         super.setupListeners()
@@ -41,14 +42,11 @@ class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, WelcomeViewModel>()
                 null -> {}
                 else ->{
                     parentFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, BottomNavigationFragment()).commit()
+                    navigateTo(BottomNavigationFragment())
                 }
             }
         }
     }
-
-    override fun getViewBinding() = FragmentWelcomeBinding.inflate(layoutInflater)
-
     private fun navigateTo(fragment: Fragment){
         parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit()
     }

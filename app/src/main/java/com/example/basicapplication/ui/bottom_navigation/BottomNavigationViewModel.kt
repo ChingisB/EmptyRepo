@@ -1,5 +1,6 @@
 package com.example.basicapplication.ui.bottom_navigation
 
-import com.example.basicapplication.base.BaseViewModel
+import com.example.base.BaseViewModel
 
-class BottomNavigationViewModel: BaseViewModel() {}
+
+class BottomNavigationViewModel: BaseViewModel()

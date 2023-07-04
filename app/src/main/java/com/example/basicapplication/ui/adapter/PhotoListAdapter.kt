@@ -7,61 +7,61 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.basicapplication.R
-import com.example.basicapplication.data.data_source.api.Config
 import com.example.basicapplication.databinding.PhotoViewHolderBinding
-import com.example.basicapplication.data.model.Photo
-import com.example.basicapplication.util.BaseListAdapter
+import com.example.data.api.Config
+import com.example.domain.entity.PaginatedPhotosEntity
+import com.example.domain.entity.PhotoEntity
+import com.example.util.BaseListAdapter
 
-class PhotoListAdapter(private var onItemClickListener: (Photo) -> Unit): BaseListAdapter<Photo, PhotoListAdapter.PhotoViewHolder>() {
 
-    private val differCallback = object: DiffUtil.ItemCallback<Photo>(){
-        override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean {
-            return oldItem.id == newItem.id
-        }
+class PhotoListAdapter(private var onItemClickListener: (PhotoEntity) -> Unit):
+    BaseListAdapter<PaginatedPhotosEntity, PhotoListAdapter.PhotoViewHolder>() {
 
-        override fun areContentsTheSame(oldItem: Photo, newItem: Photo): Boolean {
-            return oldItem.id == newItem.id
-        }
+    private val differ = AsyncListDiffer(this, DifferCallback())
+
+    inner class DifferCallback: DiffUtil.ItemCallback<PhotoEntity>(){
+        override fun areItemsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity): Boolean = oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: PhotoEntity, newItem: PhotoEntity): Boolean = oldItem == newItem
+
     }
 
-    private val differ = AsyncListDiffer(this, differCallback)
-
-    inner class PhotoViewHolder(private val view: View) :
-        RecyclerView.ViewHolder(view) {
+    inner class PhotoViewHolder(private val view: View) : ViewHolder(view) {
         private val binding = PhotoViewHolderBinding.bind(view)
-        fun bind(photo: Photo) {
+        fun bind(photo: PhotoEntity) {
             binding.apply {
                 root.setOnClickListener { onItemClickListener.invoke(photo) }
-                Glide.with(view.context).load(Config.MEDIA_URL + photo.image?.name).into(image)
+                Glide
+                    .with(view.context)
+                    .load(Config.MEDIA_URL + photo.image.name)
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .into(image)
             }
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun submitList(data: List<Photo>) {
-        differ.submitList(differ.currentList.plus(data))
-        notifyDataSetChanged()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun clearList() {
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.photo_view_holder, parent, false)
-        return PhotoViewHolder(view)
+        return PhotoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.photo_view_holder, parent, false))
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
+    override fun getItemCount() = differ.currentList.size
+
+    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) = holder.bind(differ.currentList[position])
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun submitData(data: PaginatedPhotosEntity) {
+        differ.submitList(data.data.toList())
+        notifyDataSetChanged()
     }
 
-    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.bind(differ.currentList[position])
+    @SuppressLint("NotifyDataSetChanged")
+    override fun clear() {
+        differ.submitList(emptyList())
+        notifyDataSetChanged()
     }
 
 }

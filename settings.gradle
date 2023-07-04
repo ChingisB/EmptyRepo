@@ -14,3 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BasicApplication"
 include ':app'
+include ':data'
+include ':base'
+include ':util'
+include ':domain'

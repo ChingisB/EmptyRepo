@@ -2,15 +2,21 @@ package com.example.basicapplication.dagger
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.basicapplication.data.repository.token_repository.TokenRepository
-import com.example.basicapplication.data.repository.token_repository.TokenRepositoryImpl
-import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepository
-import com.example.basicapplication.data.repository.authentication_repository.AuthenticationRepositoryImpl
-import com.example.basicapplication.data.repository.photo_repository.PhotoRepository
-import com.example.basicapplication.data.repository.photo_repository.PhotoRepositoryImpl
-import com.example.basicapplication.data.repository.user_repository.UserRepository
-import com.example.basicapplication.data.repository.user_repository.UserRepositoryImpl
-import com.example.basicapplication.util.Constants
+import com.example.data.Constants
+import com.example.data.FileFromUriResolver
+import com.example.data.FileFromUriResolverImpl
+import com.example.data.repository.authentication_repository.AuthenticationRepository
+import com.example.data.repository.authentication_repository.AuthenticationRepositoryImpl
+import com.example.data.repository.photo_repository.LocalPhotoRepositoryImpl
+import com.example.data.repository.photo_repository.RemotePhotoRepositoryImpl
+import com.example.domain.repository.token_repository.TokenRepository
+import com.example.data.repository.token_repository.TokenRepositoryImpl
+import com.example.data.repository.user_repository.LocalUserRepositoryImpl
+import com.example.data.repository.user_repository.RemoteUserRepositoryImpl
+import com.example.domain.repository.photo_repository.LocalPhotoRepository
+import com.example.domain.repository.photo_repository.RemotePhotoRepository
+import com.example.domain.repository.user_repository.LocalUserRepository
+import com.example.domain.repository.user_repository.RemoteUserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -19,16 +25,25 @@ import dagger.Provides
 interface RepositoryModule {
 
     @Binds
-    fun bindPhotoRepository(photoRepositoryImpl: PhotoRepositoryImpl): PhotoRepository
+    fun bindLocalPhotoRepository(localPhotoRepository: LocalPhotoRepositoryImpl): LocalPhotoRepository
+
+    @Binds
+    fun bindRemotePhotoRepository(remotePhotoRepository: RemotePhotoRepositoryImpl): RemotePhotoRepository
+
+    @Binds
+    fun bindLocalUserRepository(localUserRepository: LocalUserRepositoryImpl): LocalUserRepository
+
+    @Binds
+    fun bindRemoteUserRepository(remoteUserRepository: RemoteUserRepositoryImpl): RemoteUserRepository
 
     @Binds
     fun bindAuthRepository(authRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
     @Binds
-    fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+    fun bindTokenRepository(tokenRepositoryImpl: TokenRepositoryImpl): TokenRepository
 
     @Binds
-    fun bindTokenRepository(tokenRepositoryImpl: TokenRepositoryImpl): TokenRepository
+    fun bindFileFromUriResolver(fileFromUriResolverImpl: FileFromUriResolverImpl): FileFromUriResolver
 
 
     companion object{
@@ -37,6 +52,5 @@ interface RepositoryModule {
             return context.getSharedPreferences(Constants.PREFERENCES_KEY, Context.MODE_PRIVATE)
         }
     }
-
 
 }

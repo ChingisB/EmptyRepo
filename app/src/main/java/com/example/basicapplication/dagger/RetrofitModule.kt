@@ -5,13 +5,13 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
-import com.example.basicapplication.data.data_source.api.AuthenticatorImpl
-import com.example.basicapplication.data.data_source.api.Config
-import com.example.basicapplication.data.data_source.api.TokenInterceptor
-import com.example.basicapplication.data.data_source.api.service.AuthenticationService
-import com.example.basicapplication.data.data_source.api.service.ImageService
-import com.example.basicapplication.data.data_source.api.service.PhotoService
-import com.example.basicapplication.data.data_source.api.service.UserService
+import com.example.data.api.AuthenticatorImpl
+import com.example.data.api.Config
+import com.example.data.api.TokenInterceptor
+import com.example.data.api.service.AuthenticationService
+import com.example.data.api.service.ImageService
+import com.example.data.api.service.PhotoService
+import com.example.data.api.service.UserService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,16 +28,13 @@ interface RetrofitModule {
     @Binds
     fun bindAuthenticator(authenticator: AuthenticatorImpl): Authenticator
 
-    companion object{
+
+    companion object {
         @Provides
-        fun provideGsonAdapterFactory(): GsonConverterFactory {
-            return GsonConverterFactory.create()
-        }
+        fun provideGsonAdapterFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
         @Provides
-        fun provideCallAdapterFactory(): RxJava2CallAdapterFactory {
-            return RxJava2CallAdapterFactory.create()
-        }
+        fun provideCallAdapterFactory(): RxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create()
 
         @Provides
         fun provideChuckerCollector(context: Context): ChuckerCollector {
@@ -81,26 +78,17 @@ interface RetrofitModule {
         }
 
         @Provides
-        fun provideAuthenticationService(retrofit: Retrofit): AuthenticationService {
-            return retrofit.create(AuthenticationService::class.java)
-        }
+        fun provideAuthenticationService(retrofit: Retrofit): AuthenticationService = retrofit.create(AuthenticationService::class.java)
 
         @Provides
-        fun providePhotoService(retrofit: Retrofit): PhotoService {
-            return retrofit.create(PhotoService::class.java)
-        }
+        fun providePhotoService(retrofit: Retrofit): PhotoService = retrofit.create(PhotoService::class.java)
 
         @Provides
-        fun provideUserService(retrofit: Retrofit): UserService {
-            return retrofit.create(UserService::class.java)
-        }
+        fun provideUserService(retrofit: Retrofit): UserService = retrofit.create(UserService::class.java)
 
         @Provides
-        fun provideImageService(retrofit: Retrofit): ImageService{
-            return retrofit.create(ImageService::class.java)
-        }
+        fun provideImageService(retrofit: Retrofit): ImageService = retrofit.create(ImageService::class.java)
+
     }
-
-
 
 }

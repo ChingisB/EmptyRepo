@@ -17,4 +17,10 @@ object Constants {
     const val UNKNOWN_VIEW_MODEL_CLASS_ERROR = "UNKNOWN VIEW MODEL CLASS"
 
     const val MAKE_FRAGMENT = "makeFragment"
+    const val NEW_KEY = "new"
+    const val POPULAR_KEY = "popular"
+    const val NEW_MEDIA_FILE_KEY = "New picture from camera"
+    const val NEW_MEDIA_FILE_DESCRIPTION = "Some new picture"
+
+    const val SAVING_ERROR = "Unable to save photo"
 }

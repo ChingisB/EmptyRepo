@@ -67,6 +67,14 @@
                 android:textColor="@color/dark_grey"
                 android:textSize="16sp" />
 
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/saveButton"
+                android:button="@null"
+                android:background="@drawable/ic_favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp" />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatTextView

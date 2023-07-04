@@ -1,16 +1,16 @@
 package com.example.basicapplication
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.basicapplication.data.model.User
+import com.example.base.BaseViewModel
+import com.example.domain.entity.UserEntity
 
-class SharedUserViewModel: ViewModel() {
+class SharedUserViewModel: BaseViewModel() {
 
-    private val _userLiveData = MutableLiveData<User>()
+    private val _userLiveData = MutableLiveData<UserEntity>()
     val userLiveData = _userLiveData
 
 
-    fun setUser(user: User){
+    fun setUser(user: UserEntity){
         _userLiveData.postValue(user)
     }
 }

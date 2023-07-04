@@ -47,6 +47,7 @@
             android:layout_height="1dp"
             android:background="@color/grey" />
 
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
@@ -55,6 +56,15 @@
             android:contentDescription="@string/showing_post_photo"
             android:scaleType="fitCenter"
             tools:src="@tools:sample/backgrounds/scenic" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/uploadImageButton"
+            style="@style/outlinedButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outlined_button"
+            android:padding="5dp"
+            android:text="@string/upload_picture" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/postNameLayout"

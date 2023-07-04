@@ -1,16 +1,17 @@
 package com.example.basicapplication.ui.sign_up
 
-import com.example.basicapplication.ui.ui_text.UiText
+
+import com.example.util.UiText
 
 data class SignUpFormState(
     val username: String = "",
-    val usernameError: UiText? = null,
+    val usernameError: String? = null,
     val birthday: String = "",
-    val birthdayError: UiText? = null,
+    val birthdayError: String? = null,
     val email: String = "",
-    val emailError: UiText? = null,
+    val emailError: String? = null,
     val password: String = "",
-    val passwordError: UiText? = null,
+    val passwordError: String? = null,
     val confirmPassword: String = "",
-    val confirmPasswordError: UiText? = null
+    val confirmPasswordError: String? = null
 )

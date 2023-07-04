@@ -18,4 +18,11 @@
         android:iconTint="@color/grey"
         android:title="@string/profile_navigation" />
 
+    <item
+        android:id="@+id/navigation_saved"
+        android:icon="@drawable/ic_favourite"
+        android:iconTint="@color/grey"
+        android:title="Saved">
+    </item>
+
 </menu>

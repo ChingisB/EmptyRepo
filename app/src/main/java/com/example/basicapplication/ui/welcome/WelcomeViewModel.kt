@@ -1,6 +1,6 @@
 package com.example.basicapplication.ui.welcome
 
-import com.example.basicapplication.base.BaseViewModel
+import com.example.base.BaseViewModel
 
 class WelcomeViewModel: BaseViewModel() {
 }

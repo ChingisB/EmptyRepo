@@ -44,12 +44,6 @@
     <string name="logo">logo</string>
 
 
-    <string name="invalid_email">Invalid email</string>
-    <string name="invalid_birthday">Invalid date format. Correct yyyy-mm-dd"</string>
-    <string name="empty_password_error">Password cannot be empty</string>
-    <string name="password_length_error">Password minimum length should be 5 characters</string>
-    <string name="password_match_error">Passwords don\'t match</string>
-    <string name="invalid_username">Invalid username</string>
     <string name="username_in_use_error">Username is already in use</string>
     <string name="email_in_use_error">Email is already in use</string>
     <string name="invalid_credentials">Invalid credentials</string>
@@ -74,5 +68,15 @@
     <string name="description">Description</string>
     <string name="add">Add</string>
     <string name="create_photo_success">New photo created successfully</string>
+    <string name="upload_picture">Upload Picture</string>
+    <string name="change_photo">Change Photo</string>
+    <string name="sorry">Sorry!</string>
+    <string name="there_is_no_pictures">There is no pictures</string>
+    <string name="please_come_back_later">Please come back later</string>
+
+    <string name="upload_photo_error">Error when loading data, please retry</string>
+    <string name="upload_photo_loading">Photo is loading</string>
+
+    <string name="saving_error">Unable to save photo</string>
 
 </resources>

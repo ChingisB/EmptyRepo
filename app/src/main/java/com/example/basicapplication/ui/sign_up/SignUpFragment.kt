@@ -6,14 +6,14 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
 import com.example.basicapplication.databinding.FragmentSignUpBinding
 import com.example.basicapplication.ui.sign_in.SignInFragment
 import com.example.basicapplication.ui.welcome.WelcomeFragment
-import com.example.basicapplication.base.BaseFragment
-import com.example.basicapplication.util.MaskWatcher
-import com.example.basicapplication.util.Resource
+import com.example.util.MaskWatcher
+import com.example.util.Resource
 import javax.inject.Inject
 
 class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
@@ -21,11 +21,12 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
     @Inject lateinit var viewModelFactory: SignUpViewModel.Factory
     override val viewModel by viewModels<SignUpViewModel> { viewModelFactory }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         MainApplication.appComponent.inject(this)
     }
+
+    override fun getViewBinding() = FragmentSignUpBinding.inflate(layoutInflater)
 
     override fun setupListeners() {
         super.setupListeners()
@@ -43,7 +44,20 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
         }
     }
 
-    private fun navigateTo(fragment: Fragment) = parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit()
+    override fun observeData() {
+        viewModel.signedUp.observe(viewLifecycleOwner) {
+            if (it is Resource.Success) {
+                parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, SignInFragment()).commit()
+            }
+        }
+        viewModel.signUpFormState.observe(viewLifecycleOwner) { formState ->
+            binding.usernameLayout.error = formState.usernameError
+            binding.birthdayLayout.error = formState.birthdayError
+            binding.emailLayout.error = formState.emailError
+            binding.passwordLayout.error = formState.passwordError
+            binding.confirmPasswordLayout.error = formState.confirmPasswordError
+        }
+    }
 
     override fun addOnBackPressedCallbacks(dispatcher: OnBackPressedDispatcher){
         dispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true){
@@ -53,23 +67,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
         })
     }
 
-    override fun getViewBinding() = FragmentSignUpBinding.inflate(layoutInflater)
+    private fun navigateTo(fragment: Fragment) =
+        parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit()
 
-    override fun observeData() {
-        super.observeData()
-        val context = requireContext()
-        viewModel.signedUp.observe(viewLifecycleOwner) {
-            if (it is Resource.Success<*>) {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.activityFragmentContainer, SignInFragment()).commit()
-            }
-        }
-        viewModel.signUpFormState.observe(viewLifecycleOwner) { formState ->
-            binding.usernameLayout.error = formState.usernameError?.asString(context)
-            binding.birthdayLayout.error = formState.birthdayError?.asString(context)
-            binding.emailLayout.error = formState.emailError?.asString(context)
-            binding.passwordLayout.error = formState.passwordError?.asString(context)
-            binding.confirmPasswordLayout.error = formState.confirmPasswordError?.asString(context)
-        }
-    }
 }

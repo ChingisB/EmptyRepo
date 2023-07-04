@@ -1,5 +1,5 @@
 package com.example.basicapplication.ui.home
 
-import com.example.basicapplication.base.BaseViewModel
+import com.example.base.BaseViewModel
 
-class HomeViewModel: BaseViewModel() {}
+class HomeViewModel: BaseViewModel()
