@@ -55,11 +55,10 @@ class ProfileSettingsFragment : BaseFragment<FragmentProfileSettingsBinding, Pro
 
     override fun observeData() {
         sharedUserViewModel.userLiveData.observe(viewLifecycleOwner) {
-            val date = LocalDate.parse(it.birthday, DateTimeFormatter.ISO_DATE_TIME).toString()
             viewModel.userId = it.id
             binding.email.setText(it.email)
             binding.username.setText(it.username)
-            binding.birthday.setText(date)
+            binding.birthday.setText(it.birthday)
             viewModel.setInitialFormState(it.username, binding.birthday.text.toString(), it.email)
 
         }

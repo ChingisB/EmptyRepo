@@ -55,8 +55,8 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/avatarLayout"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="30dp"
             app:cardCornerRadius="120dp">
 

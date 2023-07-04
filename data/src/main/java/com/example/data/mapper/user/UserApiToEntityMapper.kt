@@ -6,5 +6,5 @@ import com.example.domain.entity.UserEntity
 
 class UserApiToEntityMapper: Mapper<User, UserEntity> {
     override fun convert(input: User): UserEntity =
-        UserEntity(id = input.id, username = input.username, email = input.email, birthday = input.birthday)
+        UserEntity(id = input.id, username = input.username, email = input.email, birthday = input.birthday.substring(0, 10))
 }

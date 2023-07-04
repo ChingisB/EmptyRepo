@@ -12,7 +12,7 @@ class PhotoApiToEntityMapper(private val imageApiToEntityMapper: Mapper<Image, I
         PhotoEntity(
             id = input.id,
             name = input.name,
-            dateCreate = input.dateCreate,
+            dateCreate = input.dateCreate.substring(0, 10),
             description = input.description,
             new = input.new,
             popular = input.popular,
