@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:clickable="true"
     android:id="@+id/rootLayout"
@@ -24,14 +25,36 @@
             android:src="@drawable/ic_chevron_left"
             android:backgroundTint="@android:color/transparent" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/showing_post_photo"
-            android:scaleType="fitCenter"
-            android:background="@color/image_background_color"
-            tools:src="@tools:sample/backgrounds/scenic" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/showing_post_photo"
+                android:scaleType="fitCenter"
+                android:background="@color/image_background_color"
+                tools:src="@tools:sample/backgrounds/scenic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/saveButton"
+                android:button="@null"
+                android:background="@drawable/ic_favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                app:layout_constraintBottom_toBottomOf="@+id/image"
+                app:layout_constraintRight_toRightOf="@+id/image"
+                android:layout_marginEnd="16dp"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -66,14 +89,6 @@
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/dark_grey"
                 android:textSize="16sp" />
-
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/saveButton"
-                android:button="@null"
-                android:background="@drawable/ic_favourite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -1,7 +1,5 @@
 package com.example.basicapplication.ui.profile_settings
 
-import com.example.util.UiText
-
 data class ProfileSettingFormState(
     val username: String = "",
     val usernameError: String? = null,

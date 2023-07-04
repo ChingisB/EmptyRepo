@@ -2,14 +2,10 @@
     <string name="app_name">BasicApplication</string>
 
     <!-- Welcome Fragment Values -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="create_account_button">Create Account</string>
     <string name="account_exists_button">I already have an account</string>
     <string name="welcome">Welcome!</string>
-
     <string name="cancel_text">Cancel</string>
-
-
     <!-- Menu items titles -->
 
     <string name="home_navigation">Home</string>
@@ -18,7 +14,6 @@
 
 
     <!-- Sign in screen values -->
-
     <string name="forgot_password">Forgot login or password?</string>
     <string name="signin">Sign In</string>
     <string name="signup">Sign Up</string>
@@ -78,5 +73,15 @@
     <string name="upload_photo_loading">Photo is loading</string>
 
     <string name="saving_error">Unable to save photo</string>
+
+    <string name="avatar_upload_success">Avatar was uploaded successfully</string>
+    <string name="avatar_upload_error">Could not upload the avatar</string>
+
+    <string name="invalid_birthday">Birth date in wrong format, correct is yyyy-mm-dd</string>
+    <string name="password_match_error">Passwords must match</string>
+    <string name="invalid_email">Email is invalid</string>
+    <string name="empty_password_error">Password cannot be empty</string>
+    <string name="password_length_error">Password should have at least 5 characters</string>
+    <string name="invalid_username">Username is invalid</string>
 
 </resources>

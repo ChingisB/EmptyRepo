@@ -9,19 +9,14 @@ class MaskWatcher(private val mask: String) : TextWatcher {
     private var isRunning = false
 
 
-    override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
-        isDeleting = count > after
-    }
+    override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) { isDeleting = count > after }
 
     override fun onTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
     override fun afterTextChanged(editable: Editable?) {
-        if (isRunning || isDeleting) return
-
-        if (editable == null) return
+        if (isRunning || isDeleting || editable == null) return
 
         if (editable.length > mask.length) editable.replace(mask.length, editable.length, "")
-
 
         isRunning = true
         if (editable.length < mask.length && mask[editable.length] != '#') editable.append(mask[editable.length])

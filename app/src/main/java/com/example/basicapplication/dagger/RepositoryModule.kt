@@ -2,6 +2,7 @@ package com.example.basicapplication.dagger
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.data.AvatarStorageReference
 import com.example.data.Constants
 import com.example.data.FileFromUriResolver
 import com.example.data.FileFromUriResolverImpl
@@ -17,6 +18,8 @@ import com.example.domain.repository.photo_repository.LocalPhotoRepository
 import com.example.domain.repository.photo_repository.RemotePhotoRepository
 import com.example.domain.repository.user_repository.LocalUserRepository
 import com.example.domain.repository.user_repository.RemoteUserRepository
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -51,6 +54,10 @@ interface RepositoryModule {
         fun provideSharedPreferences(context: Context): SharedPreferences {
             return context.getSharedPreferences(Constants.PREFERENCES_KEY, Context.MODE_PRIVATE)
         }
+
+        @Provides
+        fun provideFirebaseStorage() = FirebaseStorage.getInstance()
+
     }
 
 }

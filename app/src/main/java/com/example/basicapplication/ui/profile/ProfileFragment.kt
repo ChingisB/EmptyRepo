@@ -2,6 +2,7 @@ package com.example.basicapplication.ui.profile
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.net.toUri
@@ -9,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.base.PagingFragment
 import com.example.basicapplication.MainActivity
 import com.example.basicapplication.MainApplication
@@ -25,6 +27,7 @@ import com.example.basicapplication.util.Constants
 import com.example.domain.entity.PaginatedPhotosEntity
 import com.example.util.PlaceHolderAdapter
 import com.example.util.Resource
+import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEntity, ProfileViewModel, PhotoListAdapter>() {
@@ -76,6 +79,7 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
                     sharedUserViewModel.setUser(value)
                     viewModel.userId = value.id
                     if (viewModel.data.value == null) viewModel.loadPage()
+                    if (viewModel.avatarLiveData.value == null) viewModel.getAvatar()
                     binding.settingsButton.setOnClickListener {
                         (requireActivity()).supportFragmentManager.beginTransaction()
                             .replace(R.id.activityFragmentContainer, ProfileSettingsFragment())
@@ -98,17 +102,19 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
             }
         }
 
+        viewModel.avatarLiveData.observe(viewLifecycleOwner){
+            if(it is Resource.Success) {
+                Glide.with(this).load(it.data).into(binding.avatarImage)
+                binding.avatarImage.scaleType = ImageView.ScaleType.CENTER
+            }
+        }
+
         sharedUserViewModel.userLiveData.observe(viewLifecycleOwner) {
             binding.username.text = it.username
             binding.birthday.text = it.birthday
         }
 
-        sharedImageViewModel.imageLiveData.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.avatarImage.setImageURI(it.toUri())
-                binding.avatarImage.scaleType = ImageView.ScaleType.CENTER
-            }
-        }
+        sharedImageViewModel.imageLiveData.observe(viewLifecycleOwner) { if (it != null) { viewModel.uploadAvatar(it.toUri()) } }
     }
 
     override fun changePageLoadingState(isLoading: Boolean) {

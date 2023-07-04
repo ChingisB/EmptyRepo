@@ -16,7 +16,7 @@ abstract class PagingViewModel<Data: MutableData>: BaseViewModel(){
     var currentPage = 1
 
 
-    fun loadPage(){
+    open fun loadPage(){
         getDataSource().doOnSubscribe { _data.postValue(Resource.Loading) }
             .subscribe(
                 { value ->

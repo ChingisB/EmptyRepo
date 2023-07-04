@@ -42,9 +42,7 @@ class RecyclerViewPaginationHelper(private val loadMore: () -> Unit) : RecyclerV
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         super.onScrollStateChanged(recyclerView, newState)
-        if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-            isScrolling = true
-        }
+        if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){ isScrolling = true }
     }
 
 }

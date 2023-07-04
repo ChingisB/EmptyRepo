@@ -1,7 +1,6 @@
 package com.example.basicapplication.ui.sign_up
 
 
-import com.example.util.UiText
 
 data class SignUpFormState(
     val username: String = "",

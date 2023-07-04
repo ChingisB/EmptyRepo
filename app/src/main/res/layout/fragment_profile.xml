@@ -35,10 +35,8 @@
             android:id="@+id/avatarImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:adjustViewBounds="true"
+            android:adjustViewBounds="false"
             android:contentDescription="@string/photo_avatar"
-            android:padding="10dp"
-            android:scaleType="centerCrop"
             android:src="@drawable/ic_logo" />
     </androidx.cardview.widget.CardView>
 
