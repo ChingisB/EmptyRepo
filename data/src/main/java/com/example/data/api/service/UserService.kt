@@ -24,5 +24,7 @@ interface UserService {
     @DELETE("api/users/{id}")
     fun deleteUser(@Path("id") id: Int): Completable
 
+    @GET("api/users/{id}")
+    fun getUser(@Path("id") id: Int): Single<User>
 
 }

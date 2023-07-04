@@ -6,31 +6,31 @@ import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import com.example.domain.entity.PhotoEntity
 import com.example.domain.repository.photo_repository.LocalPhotoRepository
+import com.example.domain.use_case.GetUserUseCase
 import com.example.util.Resource
 import javax.inject.Inject
 
-class PhotoDetailsViewModel(private val localPhotoRepository: LocalPhotoRepository): BaseViewModel() {
+class PhotoDetailsViewModel(
+    private val localPhotoRepository: LocalPhotoRepository
+) : BaseViewModel() {
 
     private val _photoSavedState = MutableLiveData<Resource<Boolean>>()
     val photoSavedState: LiveData<Resource<Boolean>> = _photoSavedState
 
-    fun savePhoto(photoEntity: PhotoEntity){
+    fun savePhoto(photoEntity: PhotoEntity) {
         photoEntity.isSaved = true
         localPhotoRepository.savePhoto(photoEntity).doOnSubscribe { _photoSavedState.postValue(Resource.Loading) }.subscribe(
-            {_photoSavedState.postValue(Resource.Success(true))},
-            {
-                Log.e("what is the error", it.message.toString())
-                _photoSavedState.postValue(Resource.Error(it.message ?: Constants.SAVING_ERROR))
-            }
+            { _photoSavedState.postValue(Resource.Success(true)) },
+            { _photoSavedState.postValue(Resource.Error(it.message ?: Constants.SAVING_ERROR)) }
         ).let(compositeDisposable::add)
     }
 
-    fun removePhoto(photoEntity: PhotoEntity){
+    fun removePhoto(photoEntity: PhotoEntity) {
         photoEntity.isSaved = false
         localPhotoRepository.removePhoto(photoEntity).doOnSubscribe { _photoSavedState.postValue(Resource.Loading) }.subscribe(
-            {_photoSavedState.postValue(Resource.Success(false))},
-            {_photoSavedState.postValue(Resource.Error(it.message ?: Constants.SAVING_ERROR))}
-        ).let (compositeDisposable::add)
+            { _photoSavedState.postValue(Resource.Success(false)) },
+            { _photoSavedState.postValue(Resource.Error(it.message ?: Constants.SAVING_ERROR)) }
+        ).let(compositeDisposable::add)
     }
 
 

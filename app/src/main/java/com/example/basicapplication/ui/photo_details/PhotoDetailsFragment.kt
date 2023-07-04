@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDetailsViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: PhotoDetailsViewModel.Factory
+    @Inject lateinit var viewModelFactory: PhotoDetailsViewModel.Factory
     override val viewModel: PhotoDetailsViewModel by viewModels { viewModelFactory }
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
     private lateinit var photoEntity: PhotoEntity
@@ -52,6 +51,10 @@ class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDeta
             binding.postDate.text = it.dateCreate
             binding.saveButton.isChecked = it.isSaved
             Glide.with(binding.image).load(Config.MEDIA_URL + it.image.name).into(binding.image)
+        }
+
+        sharedPhotoViewModel.userLiveData.observe(viewLifecycleOwner){
+            binding.usernameText.text = it.username
         }
 
         viewModel.photoSavedState.observe(viewLifecycleOwner){

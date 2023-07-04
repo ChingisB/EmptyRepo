@@ -30,6 +30,8 @@ class RemoteUserRepositoryImpl @Inject constructor(private val userService: User
 
     override fun getCurrentUser() = transformUserResponse(userService.getCurrentUser())
 
+    override fun getUser(id: Int): Single<UserEntity> = transformUserResponse(userService.getUser(id))
+
     private fun transformUserResponse(response: Single<User>): Single<UserEntity>{
         return response.map(userApiToEntityMapper::convert).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }

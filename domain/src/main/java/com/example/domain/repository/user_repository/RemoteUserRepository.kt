@@ -8,4 +8,6 @@ interface RemoteUserRepository: UserRepository{
     fun updatePassword(id: Int, oldPassword: String, newPassword: String): Single<UserEntity>
 
     fun updateUser(id: Int, email: String, birthday: String, username: String): Single<UserEntity>
+
+    fun getUser(id: Int): Single<UserEntity>
 }

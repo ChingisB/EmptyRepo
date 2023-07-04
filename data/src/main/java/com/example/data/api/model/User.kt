@@ -9,7 +9,7 @@ data class User(
     @SerializedName("accountNonLocked")
     val accountNonLocked: Boolean,
     @SerializedName("birthday")
-    val birthday: String,
+    val birthday: String?,
     @SerializedName("code")
     val code: Any,
     @SerializedName("confirmationToken")

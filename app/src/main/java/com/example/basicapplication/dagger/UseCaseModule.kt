@@ -74,6 +74,9 @@ interface UseCaseModule {
                                   tokenRepository: TokenRepository
         ) = SignOutUseCase(localPhotoRepository, localUserRepository, tokenRepository)
 
+        @Provides
+        fun provideGetUserUseCase(remoteUserRepository: RemoteUserRepository) = GetUserUseCase(remoteUserRepository)
+
     }
 
 }

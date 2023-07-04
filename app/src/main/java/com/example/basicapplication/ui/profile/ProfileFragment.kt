@@ -9,6 +9,7 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.base.PagingFragment
@@ -34,11 +35,12 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
 
     @Inject lateinit var viewModelFactory: ProfileViewModel.Factory
     @Inject lateinit var sharedImageViewModelFactory: SharedImageViewModel.Factory
+    @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
     override val viewModel by viewModels<ProfileViewModel> { viewModelFactory }
     override val spanCount = 4
     override val spaceSize = 6
-    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
     private val sharedUserViewModel: SharedUserViewModel by activityViewModels()
+    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory}
     private val sharedImageViewModel: SharedImageViewModel by activityViewModels { sharedImageViewModelFactory }
 
     override fun onAttach(context: Context) {

@@ -22,12 +22,12 @@ import javax.inject.Inject
 
 class PhotosFragment : PagingFragment<FragmentNewPhotosBinding, PaginatedPhotosEntity, PhotosViewModel, PhotoListAdapter>() {
 
-    @Inject
-    lateinit var viewModelFactory: PhotosViewModel.Factory
+    @Inject lateinit var viewModelFactory: PhotosViewModel.Factory
+    @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
     override val viewModel by viewModels<PhotosViewModel> { viewModelFactory }
     override val spanCount = 2
     override val spaceSize = 10
-    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
+    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
 
 
     override fun onAttach(context: Context) {
