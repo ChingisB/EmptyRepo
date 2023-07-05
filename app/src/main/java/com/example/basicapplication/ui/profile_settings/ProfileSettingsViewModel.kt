@@ -2,7 +2,6 @@ package com.example.basicapplication.ui.profile_settings
 
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import com.example.data.api.model.NetworkError
-import com.example.data.repository.FirebaseRepository
+import com.example.data.repository.AvatarRepository
 import com.example.domain.entity.UserEntity
 import com.example.domain.repository.user_repository.RemoteUserRepository
 import com.example.domain.resource_provider.ResourceProvider
@@ -27,7 +26,7 @@ import javax.inject.Inject
 
 class ProfileSettingsViewModel(
     private val remoteUserRepository: RemoteUserRepository,
-    private val firebaseRepository: FirebaseRepository,
+    private val avatarRepository: AvatarRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validateBirthdayUseCase: ValidateBirthdayUseCase,
@@ -48,14 +47,14 @@ class ProfileSettingsViewModel(
     private val _profileSettingsFormState = MutableLiveData<ProfileSettingFormState>()
     val profileSettingFormState: LiveData<ProfileSettingFormState> = _profileSettingsFormState
     var userId = 0
-//        TODO unite
+//       TODO unite
 
     fun setInitialFormState(username: String, birthday: String, email: String) {
         initialUserInfoState = initialUserInfoState.copy(username = username, birthday = birthday, email = email)
         _profileSettingsFormState.postValue(initialUserInfoState)
     }
 
-    fun checkFormErrors(): Boolean{
+    fun checkFormErrors(): Boolean {
         val formState = _profileSettingsFormState.value ?: initialUserInfoState
         return listOf(
             formState.birthdayError,
@@ -65,7 +64,7 @@ class ProfileSettingsViewModel(
             formState.newPasswordError,
             formState.usernameError,
             formState.avatar
-        ).any { it != null}
+        ).any { it != null }
     }
 
     fun submitEvent(event: ProfileSettingFormEvent) {
@@ -79,21 +78,27 @@ class ProfileSettingsViewModel(
             is ProfileSettingFormEvent.UsernameChanged -> {
                 _profileSettingsFormState.postValue(formState.copy(username = event.username, usernameError = null))
             }
+
             is ProfileSettingFormEvent.BirthdayChanged -> {
                 _profileSettingsFormState.postValue(formState.copy(birthday = event.birthday, birthdayError = null))
             }
+
             is ProfileSettingFormEvent.EmailChanged -> {
                 _profileSettingsFormState.postValue(formState.copy(email = event.email, emailError = null))
             }
+
             is ProfileSettingFormEvent.OldPasswordChanged -> _profileSettingsFormState.postValue(
                 formState.copy(oldPassword = event.oldPassword, oldPasswordError = null)
             )
+
             is ProfileSettingFormEvent.NewPasswordChanged -> _profileSettingsFormState.postValue(
                 formState.copy(newPassword = event.newPassword, newPasswordError = null)
             )
+
             is ProfileSettingFormEvent.ConfirmPasswordChanged -> _profileSettingsFormState.postValue(
                 formState.copy(confirmPassword = event.confirmPassword, confirmPasswordError = null)
             )
+
             is ProfileSettingFormEvent.AvatarChanged -> _profileSettingsFormState.postValue(formState.copy(avatar = event.uri))
             else -> submitProfileSettingsForm()
         }
@@ -102,7 +107,7 @@ class ProfileSettingsViewModel(
     fun signOut() = signOutUseCase.invoke().subscribe({}, { it.printStackTrace() }).let(compositeDisposable::add)
 
 
-    private fun checkIsInitialFormState(): Boolean{
+    private fun checkIsInitialFormState(): Boolean {
         val formState = _profileSettingsFormState.value ?: initialUserInfoState
         return formState.email == initialUserInfoState.email && formState.username == initialUserInfoState.username &&
                 formState.birthday == initialUserInfoState.birthday
@@ -127,9 +132,9 @@ class ProfileSettingsViewModel(
 
         val isInitialFormState = checkIsInitialFormState()
 
-        if(formState.avatar != null) uploadAvatar(formState.avatar)
+        if (formState.avatar != null) uploadAvatar(formState.avatar)
 
-        if(isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) return
+        if (isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) return
 
         if (!isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) {
             val hasError = listOf(usernameResult, birthdayResult, emailResult).any { !it.success }
@@ -231,9 +236,9 @@ class ProfileSettingsViewModel(
         ).let(compositeDisposable::add)
     }
 
-    private fun uploadAvatar(imageUri: Uri){
-        if(userId == 0) return
-        firebaseRepository.uploadAvatar(userId, imageUri).subscribe(
+    private fun uploadAvatar(imageUri: Uri) {
+        if (userId == 0) return
+        avatarRepository.uploadAvatar(userId, imageUri).subscribe(
             { _updateAvatarResult.postValue(true) },
             { _updateAvatarResult.postValue(false) }
         ).let(compositeDisposable::add)
@@ -241,7 +246,7 @@ class ProfileSettingsViewModel(
 
     class Factory @Inject constructor(
         private val remoteUserRepository: RemoteUserRepository,
-        private val firebaseRepository: FirebaseRepository,
+        private val avatarRepository: AvatarRepository,
         private val validateUsername: ValidateUsernameUseCase,
         private val validateEmail: ValidateEmailUseCase,
         private val validateBirthday: ValidateBirthdayUseCase,
@@ -254,7 +259,7 @@ class ProfileSettingsViewModel(
             @Suppress("UNCHECKED_CAST")
             return ProfileSettingsViewModel(
                 remoteUserRepository,
-                firebaseRepository,
+                avatarRepository,
                 validateUsername,
                 validateEmail,
                 validateBirthday,

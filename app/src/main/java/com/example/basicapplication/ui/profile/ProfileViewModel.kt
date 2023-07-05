@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.base.PagingViewModel
 import com.example.basicapplication.util.Constants
-import com.example.data.repository.FirebaseRepository
+import com.example.data.repository.AvatarRepository
 import com.example.domain.entity.PaginatedPhotosEntity
 import com.example.domain.entity.UserEntity
+import com.example.domain.repository.PhotoViewsRepository
 import com.example.domain.use_case.GetCurrentUserUseCase
 import com.example.domain.use_case.GetUserPhotosUseCase
 import com.example.util.Resource
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class ProfileViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val getUserPhotosUseCase: GetUserPhotosUseCase,
-    private val firebaseRepository: FirebaseRepository
+    private val avatarRepository: AvatarRepository,
+    private val photoViewsRepository: PhotoViewsRepository
 ) : PagingViewModel<PaginatedPhotosEntity>() {
 
     private val _userLiveData = MutableLiveData<Resource<UserEntity>>()
@@ -44,22 +46,25 @@ class ProfileViewModel(
     override fun checkIsLastPage(data: PaginatedPhotosEntity) = data.countOfPages >= currentPage
 
     fun getAvatar(){
-        firebaseRepository.getUserAvatar(userId).doOnSubscribe { _avatarLiveData.postValue(Resource.Loading) }.subscribe(
+        avatarRepository.getUserAvatar(userId).doOnSubscribe { _avatarLiveData.postValue(Resource.Loading) }.subscribe(
             {_avatarLiveData.postValue(Resource.Success(it))},
             {_avatarLiveData.postValue(Resource.Error(it.message ?: Constants.NETWORK_ERROR))}
         ).let(compositeDisposable::add)
     }
 
+    fun getUserViews(userEntity: UserEntity, callback: (Long) -> Unit) = photoViewsRepository.getUserTotalViews(userEntity.id, callback)
+
 
     class Factory @Inject constructor(
         private val getCurrentUserUseCase: GetCurrentUserUseCase,
         private val getUserPhotosUseCase: GetUserPhotosUseCase,
-        private val firebaseRepository: FirebaseRepository
+        private val avatarRepository: AvatarRepository,
+        private val photoViewsRepository: PhotoViewsRepository
     ) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
             @Suppress("UNCHECKED_CAST")
-            return ProfileViewModel(getCurrentUserUseCase, getUserPhotosUseCase, firebaseRepository) as T
+            return ProfileViewModel(getCurrentUserUseCase, getUserPhotosUseCase, avatarRepository, photoViewsRepository) as T
         }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
 
     }

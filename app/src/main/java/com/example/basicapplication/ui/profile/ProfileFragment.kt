@@ -72,6 +72,9 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
                             .addToBackStack(Constants.PROFILE_SETTINGS)
                             .commit()
                     }
+                    viewModel.getUserViews(value) { totalViews ->
+                        binding.totalViewsText.text = if(totalViews > 999) "999+" else totalViews.toString()
+                    }
                 }
 
                 is Resource.Loading -> {}

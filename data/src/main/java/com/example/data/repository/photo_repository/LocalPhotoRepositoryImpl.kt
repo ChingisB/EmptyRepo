@@ -79,9 +79,7 @@ class LocalPhotoRepositoryImpl @Inject constructor(
             realm.executeTransaction { r ->
                 try {
                     r.insert(photoObject)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                } catch (e: Exception) { }
             }
         }.subscribeOn(singleThreadScheduler).observeOn(AndroidSchedulers.mainThread())
     }

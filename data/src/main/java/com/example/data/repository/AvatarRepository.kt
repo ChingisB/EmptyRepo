@@ -6,7 +6,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
 
-class FirebaseRepository @Inject constructor(private val storage: FirebaseStorage) {
+class AvatarRepository @Inject constructor(private val storage: FirebaseStorage) {
 
     fun uploadAvatar(userId: Int, imageUri: Uri): Completable =
         Completable.create { emitter ->

@@ -95,4 +95,6 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
 
     implementation "io.realm:realm-android-library:10.4.0"
+
+    implementation "com.google.firebase:firebase-database"
 }

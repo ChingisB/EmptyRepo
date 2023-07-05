@@ -51,6 +51,10 @@ class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDeta
             binding.postDate.text = it.dateCreate
             binding.saveButton.isChecked = it.isSaved
             Glide.with(binding.image).load(Config.MEDIA_URL + it.image.name).into(binding.image)
+            viewModel.viewPhoto(it)
+            viewModel.getTotalViews(it.id){ totalViews ->
+                binding.totalViewsText.text = if(totalViews > 999) "999+" else totalViews.toString()
+            }
         }
 
         sharedPhotoViewModel.userLiveData.observe(viewLifecycleOwner){

@@ -1,17 +1,18 @@
 package com.example.basicapplication.ui.photo_details
 
-import android.util.Log
+
 import androidx.lifecycle.*
 import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import com.example.domain.entity.PhotoEntity
+import com.example.domain.repository.PhotoViewsRepository
 import com.example.domain.repository.photo_repository.LocalPhotoRepository
-import com.example.domain.use_case.GetUserUseCase
 import com.example.util.Resource
 import javax.inject.Inject
 
 class PhotoDetailsViewModel(
-    private val localPhotoRepository: LocalPhotoRepository
+    private val localPhotoRepository: LocalPhotoRepository,
+    private val photoViewsRepository: PhotoViewsRepository
 ) : BaseViewModel() {
 
     private val _photoSavedState = MutableLiveData<Resource<Boolean>>()
@@ -33,13 +34,19 @@ class PhotoDetailsViewModel(
         ).let(compositeDisposable::add)
     }
 
+    fun getTotalViews(photoId: Int, callback: (Long) -> Unit) = photoViewsRepository.getPhotoViews(photoId, callback)
 
-    class Factory @Inject constructor(private val localPhotoRepository: LocalPhotoRepository) :
-        AbstractSavedStateViewModelFactory() {
+    fun viewPhoto(photoEntity: PhotoEntity) = photoViewsRepository.addPhotoView(photoEntity)
+
+
+    class Factory @Inject constructor(
+        private val localPhotoRepository: LocalPhotoRepository,
+        private val photoViewsRepository: PhotoViewsRepository
+        ) : AbstractSavedStateViewModelFactory() {
 
         override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T = kotlin.runCatching {
             @Suppress("UNCHECKED_CAST")
-            return PhotoDetailsViewModel(localPhotoRepository) as T
+            return PhotoDetailsViewModel(localPhotoRepository, photoViewsRepository) as T
         }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
     }
 }
