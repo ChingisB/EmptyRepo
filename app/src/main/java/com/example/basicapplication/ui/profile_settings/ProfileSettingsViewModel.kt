@@ -1,6 +1,8 @@
 package com.example.basicapplication.ui.profile_settings
 
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import com.example.data.api.model.NetworkError
-import com.example.domain.repository.token_repository.TokenRepository
+import com.example.data.repository.FirebaseRepository
+import com.example.domain.entity.UserEntity
 import com.example.domain.repository.user_repository.RemoteUserRepository
 import com.example.domain.resource_provider.ResourceProvider
 import com.example.domain.use_case.*
@@ -19,13 +22,12 @@ import com.example.domain.use_case.validation.ValidatePasswordUseCase
 import com.example.domain.use_case.validation.ValidateUsernameUseCase
 import com.example.util.Resource
 import com.google.gson.Gson
-import io.reactivex.android.schedulers.AndroidSchedulers
 import retrofit2.HttpException
 import javax.inject.Inject
 
 class ProfileSettingsViewModel(
-    private val tokenRepository: TokenRepository,
     private val remoteUserRepository: RemoteUserRepository,
+    private val firebaseRepository: FirebaseRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validateBirthdayUseCase: ValidateBirthdayUseCase,
@@ -36,12 +38,12 @@ class ProfileSettingsViewModel(
 ) : BaseViewModel() {
 
 
-    private val _updateUserResult = MutableLiveData<Resource<Boolean>>()
-    val updateUserResult: LiveData<Resource<Boolean>> = _updateUserResult
-    private val _updatePasswordResult = MutableLiveData<Resource<Boolean>>()
-    val updatePasswordResult: LiveData<Resource<Boolean>> = _updatePasswordResult
-    private val _signOutResult = MutableLiveData<Boolean>()
-    val signOutResult: LiveData<Boolean> = _signOutResult
+    private val _updateUserResult = MutableLiveData<Resource<UserEntity>>()
+    val updateUserResult: LiveData<Resource<UserEntity>> = _updateUserResult
+    private val _updatePasswordResult = MutableLiveData<Boolean>()
+    val updatePasswordResult: LiveData<Boolean> = _updatePasswordResult
+    private val _updateAvatarResult = MutableLiveData<Boolean>()
+    val updateAvatarResult: LiveData<Boolean> = _updateAvatarResult
     private var initialUserInfoState = ProfileSettingFormState()
     private val _profileSettingsFormState = MutableLiveData<ProfileSettingFormState>()
     val profileSettingFormState: LiveData<ProfileSettingFormState> = _profileSettingsFormState
@@ -51,7 +53,19 @@ class ProfileSettingsViewModel(
     fun setInitialFormState(username: String, birthday: String, email: String) {
         initialUserInfoState = initialUserInfoState.copy(username = username, birthday = birthday, email = email)
         _profileSettingsFormState.postValue(initialUserInfoState)
+    }
 
+    fun checkFormErrors(): Boolean{
+        val formState = _profileSettingsFormState.value ?: initialUserInfoState
+        return listOf(
+            formState.birthdayError,
+            formState.confirmPasswordError,
+            formState.emailError,
+            formState.oldPasswordError,
+            formState.newPasswordError,
+            formState.usernameError,
+            formState.avatar
+        ).any { it != null}
     }
 
     fun submitEvent(event: ProfileSettingFormEvent) {
@@ -80,13 +94,12 @@ class ProfileSettingsViewModel(
             is ProfileSettingFormEvent.ConfirmPasswordChanged -> _profileSettingsFormState.postValue(
                 formState.copy(confirmPassword = event.confirmPassword, confirmPasswordError = null)
             )
+            is ProfileSettingFormEvent.AvatarChanged -> _profileSettingsFormState.postValue(formState.copy(avatar = event.uri))
             else -> submitProfileSettingsForm()
         }
     }
 
-    fun signOut() = signOutUseCase.invoke()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({ _signOutResult.postValue(true)}, { it.printStackTrace() }).let(compositeDisposable::add)
+    fun signOut() = signOutUseCase.invoke().subscribe({}, { it.printStackTrace() }).let(compositeDisposable::add)
 
 
     private fun checkIsInitialFormState(): Boolean{
@@ -114,8 +127,11 @@ class ProfileSettingsViewModel(
 
         val isInitialFormState = checkIsInitialFormState()
 
+        if(formState.avatar != null) uploadAvatar(formState.avatar)
 
-        if (!isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it == "" }) {
+        if(isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) return
+
+        if (!isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) {
             val hasError = listOf(usernameResult, birthdayResult, emailResult).any { !it.success }
             if (hasError) {
                 _profileSettingsFormState.postValue(
@@ -131,7 +147,7 @@ class ProfileSettingsViewModel(
             return
         }
 
-        if (isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).any { it != "" }) {
+        if (isInitialFormState) {
             val hasError = listOf(oldPasswordResult, newPasswordResult, confirmPasswordResult).any { !it.success }
             if (hasError) {
                 _profileSettingsFormState.postValue(
@@ -168,12 +184,12 @@ class ProfileSettingsViewModel(
 
     private fun updatePassword(oldPassword: String, newPassword: String) {
         remoteUserRepository.updatePassword(userId, oldPassword, newPassword).subscribe(
-            { _updatePasswordResult.postValue(Resource.Success(true)) },
+            { _updatePasswordResult.postValue(true) },
             { error ->
                 val message: String
                 if (error is HttpException) {
                     if (error.code() == 500) {
-                        _updatePasswordResult.postValue(Resource.Success(true))
+                        _updatePasswordResult.postValue(true)
                     }
                     val body = error.response()?.errorBody()?.string()
                     val adapter = Gson().getAdapter(NetworkError::class.java)
@@ -191,11 +207,10 @@ class ProfileSettingsViewModel(
     }
 
     private fun updateUserInfo(username: String, email: String, birthday: String) {
-        remoteUserRepository.updateUser(userId, username = username, email = email, birthday = birthday)
-            .doOnSubscribe { _updateUserResult.postValue(Resource.Loading) }.subscribe(
-            { _updateUserResult.postValue(Resource.Success(true)) },
+        remoteUserRepository.updateUser(userId, username = username, email = email, birthday = birthday).subscribe(
+            { _updateUserResult.postValue(Resource.Success(it)) },
             { error ->
-                var message: String = error.message.toString()
+                var message: String = Constants.NETWORK_ERROR
                 if (error is HttpException) {
                     val body = error.response()?.errorBody()?.string()
                     val adapter = Gson().getAdapter(NetworkError::class.java)
@@ -211,15 +226,22 @@ class ProfileSettingsViewModel(
                         )
                     }
                 }
-                _updateUserResult.postValue(Resource.Error(message = message))
+                _updateUserResult.postValue(Resource.Error(message))
             }
         ).let(compositeDisposable::add)
     }
 
+    private fun uploadAvatar(imageUri: Uri){
+        if(userId == 0) return
+        firebaseRepository.uploadAvatar(userId, imageUri).subscribe(
+            { _updateAvatarResult.postValue(true) },
+            { _updateAvatarResult.postValue(false) }
+        ).let(compositeDisposable::add)
+    }
 
     class Factory @Inject constructor(
-        private val tokenRepository: TokenRepository,
         private val remoteUserRepository: RemoteUserRepository,
+        private val firebaseRepository: FirebaseRepository,
         private val validateUsername: ValidateUsernameUseCase,
         private val validateEmail: ValidateEmailUseCase,
         private val validateBirthday: ValidateBirthdayUseCase,
@@ -231,8 +253,8 @@ class ProfileSettingsViewModel(
         override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
             @Suppress("UNCHECKED_CAST")
             return ProfileSettingsViewModel(
-                tokenRepository,
                 remoteUserRepository,
+                firebaseRepository,
                 validateUsername,
                 validateEmail,
                 validateBirthday,

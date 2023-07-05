@@ -1,56 +1,43 @@
 package com.example.basicapplication.ui.profile
 
 import android.content.Context
-import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.base.PagingFragment
 import com.example.basicapplication.MainActivity
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
-import com.example.basicapplication.SharedImageViewModel
 import com.example.basicapplication.SharedPhotoViewModel
 import com.example.basicapplication.SharedUserViewModel
 import com.example.basicapplication.databinding.FragmentProfileBinding
 import com.example.basicapplication.ui.adapter.PhotoListAdapter
-import com.example.basicapplication.ui.bottom_sheet_dialog_fragment.ChoosePictureUploadModeBottomSheetDialog
 import com.example.basicapplication.ui.photo_details.PhotoDetailsFragment
 import com.example.basicapplication.ui.profile_settings.ProfileSettingsFragment
 import com.example.basicapplication.util.Constants
 import com.example.domain.entity.PaginatedPhotosEntity
 import com.example.util.PlaceHolderAdapter
 import com.example.util.Resource
-import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEntity, ProfileViewModel, PhotoListAdapter>() {
 
     @Inject lateinit var viewModelFactory: ProfileViewModel.Factory
-    @Inject lateinit var sharedImageViewModelFactory: SharedImageViewModel.Factory
     @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
     override val viewModel by viewModels<ProfileViewModel> { viewModelFactory }
     override val spanCount = 4
     override val spaceSize = 6
     private val sharedUserViewModel: SharedUserViewModel by activityViewModels()
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
-    private val sharedImageViewModel: SharedImageViewModel by activityViewModels { sharedImageViewModelFactory }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         MainApplication.appComponent.inject(this)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedImageViewModel.clearImageFile()
     }
 
     override fun getViewBinding() = FragmentProfileBinding.inflate(layoutInflater)
@@ -68,10 +55,7 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
         changePageLoadingState(false)
     }
 
-    override fun setupListeners() {
-        binding.refreshBar.setOnRefreshListener { viewModel.refreshData() }
-        binding.avatarCard.setOnClickListener { ChoosePictureUploadModeBottomSheetDialog().show(childFragmentManager, "") }
-    }
+    override fun setupListeners() = binding.refreshBar.setOnRefreshListener { viewModel.refreshData() }
 
     override fun observeData() {
         super.observeData()
@@ -84,40 +68,39 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
                     if (viewModel.avatarLiveData.value == null) viewModel.getAvatar()
                     binding.settingsButton.setOnClickListener {
                         (requireActivity()).supportFragmentManager.beginTransaction()
-                            .replace(R.id.activityFragmentContainer, ProfileSettingsFragment())
+                            .add(R.id.activityFragmentContainer, ProfileSettingsFragment())
                             .addToBackStack(Constants.PROFILE_SETTINGS)
                             .commit()
                     }
                 }
 
                 is Resource.Loading -> {}
-                is Resource.Error -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-                }
+                is Resource.Error -> { Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show() }
             }
         }
 
         viewModel.data.observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Success -> binding.totalImagesText.text = it.data.totalItems.toString()
+                is Resource.Success ->{
+                    binding.totalImagesText.text = it.data.totalItems.toString()
+                    binding.refreshBar.isRefreshing = false
+                }
                 is Resource.Loading -> if (binding.refreshBar.isRefreshing) binding.progressBar.isVisible = false
                 else -> binding.refreshBar.isRefreshing = false
             }
         }
 
-        viewModel.avatarLiveData.observe(viewLifecycleOwner){
-            if(it is Resource.Success) {
-                Glide.with(this).load(it.data).into(binding.avatarImage)
-                binding.avatarImage.scaleType = ImageView.ScaleType.CENTER
-            }
-        }
+        viewModel.avatarLiveData.observe(viewLifecycleOwner){ if(it is Resource.Success) sharedUserViewModel.setAvatar(it.data) }
 
         sharedUserViewModel.userLiveData.observe(viewLifecycleOwner) {
             binding.username.text = it.username
             binding.birthday.text = it.birthday
         }
 
-        sharedImageViewModel.imageLiveData.observe(viewLifecycleOwner) { if (it != null) { viewModel.uploadAvatar(it.toUri()) } }
+        sharedUserViewModel.avatarLiveData.observe(viewLifecycleOwner){
+            Glide.with(this).load(it).into(binding.avatarImage)
+            binding.avatarImage.scaleType = ImageView.ScaleType.CENTER
+        }
     }
 
     override fun changePageLoadingState(isLoading: Boolean) {

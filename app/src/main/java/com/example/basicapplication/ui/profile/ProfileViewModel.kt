@@ -43,11 +43,6 @@ class ProfileViewModel(
 
     override fun checkIsLastPage(data: PaginatedPhotosEntity) = data.countOfPages >= currentPage
 
-    fun uploadAvatar(imageUri: Uri){
-        if(userId == 0) return
-        firebaseRepository.uploadAvatar(userId, imageUri).subscribe{ getAvatar() }.let(compositeDisposable::add)
-    }
-
     fun getAvatar(){
         firebaseRepository.getUserAvatar(userId).doOnSubscribe { _avatarLiveData.postValue(Resource.Loading) }.subscribe(
             {_avatarLiveData.postValue(Resource.Success(it))},

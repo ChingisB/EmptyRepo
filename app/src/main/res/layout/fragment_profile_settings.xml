@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <!-- TODO appbarLayout with toolbar, вложенность-->
 
@@ -54,25 +55,23 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/avatarLayout"
+            android:id="@+id/avatarCard"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="30dp"
             app:cardCornerRadius="120dp">
 
+            <!-- todo naming-->
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/avatar"
+                android:id="@+id/avatarImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:contentDescription="@string/photo_avatar"
-                android:padding="10dp"
-                android:scaleType="fitXY"
                 android:src="@drawable/ic_logo" />
         </androidx.cardview.widget.CardView>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
@@ -92,6 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:fontFamily="@font/roboto_regular"
                 android:text="@string/personal_data"
