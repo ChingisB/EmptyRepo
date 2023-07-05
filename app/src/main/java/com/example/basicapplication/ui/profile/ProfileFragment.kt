@@ -102,7 +102,7 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
 
         sharedUserViewModel.avatarLiveData.observe(viewLifecycleOwner){
             Glide.with(this).load(it).into(binding.avatarImage)
-            binding.avatarImage.scaleType = ImageView.ScaleType.CENTER
+            binding.avatarImage.scaleType = ImageView.ScaleType.FIT_CENTER
         }
     }
 

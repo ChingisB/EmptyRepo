@@ -15,7 +15,7 @@ class PhotosViewModel(private val getPhotosUseCase: GetPhotosUseCase) : PagingVi
 
     var new = false
     var popular = false
-    var query: String = ""
+    private var query: String = ""
 
     override fun getDataSource(): Single<PaginatedPhotosEntity> =
         getPhotosUseCase.invoke(page = currentPage, query = query, new = new, popular = popular)

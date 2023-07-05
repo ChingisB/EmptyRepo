@@ -6,13 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.base.BaseViewModel
-import com.example.basicapplication.ui.photo_details.PhotoDetailsViewModel
 import com.example.basicapplication.util.Constants
 import com.example.domain.entity.PhotoEntity
 import com.example.domain.entity.UserEntity
-import com.example.domain.repository.photo_repository.LocalPhotoRepository
 import com.example.domain.use_case.GetUserUseCase
-import com.google.firebase.crashlytics.internal.model.CrashlyticsReport.Session.User
 import javax.inject.Inject
 
 class SharedPhotoViewModel(private val getUserUseCase: GetUserUseCase) : BaseViewModel() {

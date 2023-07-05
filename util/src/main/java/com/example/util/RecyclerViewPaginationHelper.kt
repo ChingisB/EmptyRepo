@@ -19,6 +19,9 @@ class RecyclerViewPaginationHelper(private val loadMore: () -> Unit) : RecyclerV
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
+
+        if (isLastPage || isLoading) return
+
         val layoutManager = recyclerView.layoutManager
         val visibleItemCount = layoutManager!!.childCount
         val totalItemCount = layoutManager.itemCount
@@ -30,8 +33,6 @@ class RecyclerViewPaginationHelper(private val loadMore: () -> Unit) : RecyclerV
             }
             else -> (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
         }
-
-        if (isLastPage || isLoading) return
 
         if (visibleItemCount + lastVisiblePosition + threshold >= totalItemCount && !endWithAuto && isScrolling) {
             endWithAuto = true

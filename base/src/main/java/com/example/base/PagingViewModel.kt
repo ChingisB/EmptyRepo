@@ -26,8 +26,7 @@ abstract class PagingViewModel<Data: MutableData>: BaseViewModel(){
                     _isLastPage.postValue(checkIsLastPage(value))
                     _data.postValue(Resource.Success(mutableData ?: value))
                 },
-                { it.printStackTrace()
-                    _data.postValue(Resource.Error(message = it.message ?: "NETWORK_ERROR")) })
+                { _data.postValue(Resource.Error(message = it.message ?: "NETWORK_ERROR")) })
             .let(compositeDisposable::add)
     }
 

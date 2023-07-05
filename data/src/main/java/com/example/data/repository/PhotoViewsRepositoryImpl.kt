@@ -11,13 +11,13 @@ import com.google.firebase.database.ValueEventListener
 import javax.inject.Inject
 
 class PhotoViewsRepositoryImpl @Inject constructor(private val photoViewsReference: DatabaseReference) : PhotoViewsRepository {
+
     override fun addPhotoView(photoEntity: PhotoEntity) {
         val itemReference = photoViewsReference.child(photoEntity.id.toString())
         itemReference.addListenerForSingleValueEvent(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val existingValue = snapshot.getValue(PhotoViews::class.java)
-
                     itemReference.setValue(PhotoViews(existingValue?.totalViews?.plus(1) ?: 1, photoEntity.userID))
                 }
 
@@ -41,14 +41,9 @@ class PhotoViewsRepositoryImpl @Inject constructor(private val photoViewsReferen
     override fun getPhotoViews(photoId: Int, callback: (Long) -> Unit) {
         photoViewsReference.child(photoId.toString()).addListenerForSingleValueEvent(
             object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    callback(snapshot.getValue(PhotoViews::class.java)?.totalViews ?: 0L)
-                }
+                override fun onDataChange(snapshot: DataSnapshot) = callback(snapshot.getValue(PhotoViews::class.java)?.totalViews ?: 0L)
 
-                override fun onCancelled(error: DatabaseError) {
-                    callback(0L)
-                }
-
+                override fun onCancelled(error: DatabaseError) = callback(0L)
             }
         )
     }

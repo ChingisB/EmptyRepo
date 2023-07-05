@@ -12,9 +12,7 @@ import javax.inject.Inject
 
 class FavouriteViewModel(private val photoRepository: LocalPhotoRepository): PagingViewModel<PaginatedPhotosEntity>() {
 
-    init{
-        refreshData()
-    }
+    init{ refreshData() }
 
     override fun getDataSource(): Single<PaginatedPhotosEntity> = photoRepository.getSavedPhotos(currentPage)
 

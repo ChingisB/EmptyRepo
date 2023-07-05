@@ -18,7 +18,6 @@ class FileFromUriResolverImpl @Inject constructor(private val context: Context):
         return null
     }
 
-    override fun getFileType(uri: Uri): String? {
-        return context.contentResolver.getType(uri)
-    }
+    override fun getFileType(uri: Uri): String? = context.contentResolver.getType(uri)
+
 }

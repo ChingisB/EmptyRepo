@@ -1,7 +1,6 @@
 package com.example.base
 
 import android.content.pm.ActivityInfo
-import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
@@ -50,7 +49,7 @@ abstract class PagingFragment<
     }
 
     override fun observeData() {
-//        TODO optimize
+//       TODO optimize
         viewModel.data.observe(viewLifecycleOwner) {
             paginationHelper.isLoading = when (it) {
                 is Resource.Loading -> true
@@ -64,7 +63,6 @@ abstract class PagingFragment<
                 }
                 is Resource.Error -> {
                     isErrorShowing = true
-                    Log.e("what is the error", it.message)
                     showPageError(it)
                     false
                 }
@@ -74,7 +72,7 @@ abstract class PagingFragment<
 
         viewModel.isLastPage.observe(viewLifecycleOwner) { paginationHelper.isLastPage = it }
     }
-    //        TODO optimize
+    //       TODO optimize
     //private fun createPaginator() = Unit
 
 //    TODO trash methods
