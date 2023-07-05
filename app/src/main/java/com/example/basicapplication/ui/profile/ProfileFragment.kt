@@ -40,7 +40,7 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
     override val spanCount = 4
     override val spaceSize = 6
     private val sharedUserViewModel: SharedUserViewModel by activityViewModels()
-    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory}
+    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
     private val sharedImageViewModel: SharedImageViewModel by activityViewModels { sharedImageViewModelFactory }
 
     override fun onAttach(context: Context) {
@@ -99,6 +99,7 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
 
         viewModel.data.observe(viewLifecycleOwner) {
             when (it) {
+                is Resource.Success -> binding.totalImagesText.text = it.data.totalItems.toString()
                 is Resource.Loading -> if (binding.refreshBar.isRefreshing) binding.progressBar.isVisible = false
                 else -> binding.refreshBar.isRefreshing = false
             }
