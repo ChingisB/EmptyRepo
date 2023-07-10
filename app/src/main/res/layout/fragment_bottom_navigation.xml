@@ -27,5 +27,4 @@
         app:itemIconTint="@color/bottom_nav_color"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu" />
-
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -9,7 +9,7 @@ interface AuthenticationRepository{
 
     fun signIn(username: String, password: String): Single<AuthResponse>
 
-    fun signUp(item: CreateUser): Single<User>
+    fun signUp(username: String, birthday: String, email: String, password: String, confirmPassword: String): Single<User>
 
     fun saveTokens(auth: AuthResponse)
 

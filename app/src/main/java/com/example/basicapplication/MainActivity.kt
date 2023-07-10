@@ -17,8 +17,10 @@ class MainActivity : AppCompatActivity() {
     private val tokenViewModel: TokenViewModel by viewModels { tokenViewModelFactory }
     val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MainApplication.appComponent.inject(this)
         setContentView(binding.root)
 
         val observer = object : Observer<String?> {

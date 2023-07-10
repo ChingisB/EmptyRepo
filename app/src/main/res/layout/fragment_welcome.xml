@@ -29,20 +29,20 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/navigateToSignup"
+            style="@style/filledButtonStyle"
             android:layout_width="320dp"
             android:layout_height="48dp"
             android:layout_marginTop="40dp"
-            android:text="@string/create_account_button"
             android:background="@drawable/black_button"
-            style="@style/filledButtonStyle"/>
+            android:text="@string/create_account_button" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/navigateToSignin"
+            style="@style/outlinedButtonStyle"
             android:layout_width="320dp"
             android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/outlined_button"
-            android:text="@string/account_exists_button"
-            style="@style/outlinedButtonStyle"/>
+            android:text="@string/account_exists_button" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </ScrollView>

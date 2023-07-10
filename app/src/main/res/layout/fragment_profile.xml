@@ -6,7 +6,6 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/settingsButton"
         android:layout_width="48dp"
@@ -16,8 +15,7 @@
         android:background="@null"
         android:contentDescription="@string/settings"
         android:src="@drawable/ic_settings" />
-
-    <!--TODO нейминг id-->
+    <!-- TODO нейминг id-->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -29,7 +27,6 @@
         android:layout_height="100dp"
         android:layout_marginTop="30dp"
         app:cardCornerRadius="120dp">
-
         <!-- todo naming-->
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/avatarImage"
@@ -55,7 +52,6 @@
         android:id="@+id/birthday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_regular"
         android:text="2020-10-10"
@@ -104,7 +100,6 @@
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/dark_grey"
             android:textSize="12sp" />
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -112,7 +107,6 @@
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:background="@color/grey" />
-
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -126,7 +120,6 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/photoGrid"
                 android:layout_width="match_parent"
@@ -134,9 +127,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
                 android:paddingTop="20dp" />
-
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -144,8 +135,5 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="16dp"
             android:indeterminateDrawable="@drawable/ic_loading_animation" />
-
-
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -60,9 +60,11 @@ interface RetrofitModule {
             authenticator: Authenticator,
             tokenInterceptor: TokenInterceptor
         ): OkHttpClient {
-            val okHttpClient =
-                OkHttpClient.Builder().authenticator(authenticator).addInterceptor(tokenInterceptor).addInterceptor(chuckerInterceptor)
-            return okHttpClient.build()
+            return OkHttpClient.Builder()
+                .authenticator(authenticator)
+                .addInterceptor(tokenInterceptor)
+                .addInterceptor(chuckerInterceptor)
+                .build()
         }
 
         @Provides
@@ -71,7 +73,9 @@ interface RetrofitModule {
             gsonConverterFactory: GsonConverterFactory,
             rxJava2CallAdapterFactory: RxJava2CallAdapterFactory
         ): Retrofit {
-            return Retrofit.Builder().baseUrl(Config.API_URL).client(okHttpClient)
+            return Retrofit.Builder()
+                .baseUrl(Config.API_URL)
+                .client(okHttpClient)
                 .addConverterFactory(gsonConverterFactory)
                 .addCallAdapterFactory(rxJava2CallAdapterFactory)
                 .build()

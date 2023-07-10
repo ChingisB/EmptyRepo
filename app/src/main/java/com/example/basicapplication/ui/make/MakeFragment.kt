@@ -2,7 +2,6 @@ package com.example.basicapplication.ui.make
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import com.example.base.BaseFragment
@@ -42,13 +41,12 @@ class MakeFragment : BaseFragment<FragmentMakeBinding, MakeViewModel>() {
     }
 
     override fun setupListeners() {
-        super.setupListeners()
         binding.saveButton.setOnClickListener {
-            if(imageFile != null) viewModel.createPhoto(imageFile!!, binding.postName.text.toString(), binding.description.text.toString())
+            if (imageFile != null) viewModel.createPhoto(imageFile!!, binding.postName.text.toString(), binding.description.text.toString())
         }
         binding.uploadImageButton.setOnClickListener { ChoosePictureUploadModeBottomSheetDialog().show(childFragmentManager, "") }
         binding.cancel.setOnClickListener { childFragmentManager.popBackStack() }
-        binding.checkBoxNewTag.setOnClickListener{ viewModel.new = binding.checkBoxNewTag.isChecked }
+        binding.checkBoxNewTag.setOnClickListener { viewModel.new = binding.checkBoxNewTag.isChecked }
         binding.checkBoxPopularTag.setOnClickListener { viewModel.popular = binding.checkBoxPopularTag.isChecked }
     }
 
@@ -60,12 +58,13 @@ class MakeFragment : BaseFragment<FragmentMakeBinding, MakeViewModel>() {
             binding.uploadImageButton.text = getText(R.string.change_photo)
         }
         viewModel.createPhotoResultLiveData.observe(viewLifecycleOwner) {
-            val toastMessage = when(it){
-                is Resource.Success -> R.string.create_photo_success
-                is Resource.Error -> R.string.upload_photo_error
-                is Resource.Loading -> R.string.upload_photo_loading
-            }
-            Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show()
+            showToastShort(
+                when (it) {
+                    is Resource.Success -> R.string.create_photo_success
+                    is Resource.Error -> R.string.upload_photo_error
+                    is Resource.Loading -> R.string.upload_photo_loading
+                }
+            )
         }
     }
 

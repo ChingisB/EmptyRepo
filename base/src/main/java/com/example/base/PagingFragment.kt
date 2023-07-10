@@ -18,11 +18,10 @@ abstract class PagingFragment<
     BaseFragment<VBinding, ViewModel>() {
 
     abstract val spanCount: Int
-    abstract val spaceSize: Int
     val listAdapter: ListAdapter by lazy { createListAdapter() }
     private val paginationHelper: RecyclerViewPaginationHelper = RecyclerViewPaginationHelper { viewModel.loadPage() }
     private var isErrorShowing = false
-    private lateinit var marginItemDecoration: MarginItemDecoration
+
 
     abstract fun createListAdapter(): ListAdapter
 
@@ -33,18 +32,14 @@ abstract class PagingFragment<
         return GridLayoutManager(requireContext(), spanCount * 2)
     }
 
-    private fun createMarginItemDecoration() = MarginItemDecoration(spaceSize, spanCount)
-
     fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.adapter = null
         recyclerView.layoutManager = null
         recyclerView.clearOnScrollListeners()
-        marginItemDecoration = createMarginItemDecoration()
         recyclerView.apply {
             adapter = listAdapter
             layoutManager = createLayoutManager()
             addOnScrollListener(paginationHelper)
-            if (itemDecorationCount == 0) addItemDecoration(marginItemDecoration)
         }
     }
 
@@ -72,7 +67,7 @@ abstract class PagingFragment<
 
         viewModel.isLastPage.observe(viewLifecycleOwner) { paginationHelper.isLastPage = it }
     }
-    //       TODO optimize
+    //      TODO optimize
     //private fun createPaginator() = Unit
 
 //    TODO trash methods

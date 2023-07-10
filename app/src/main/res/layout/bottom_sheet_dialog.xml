@@ -22,5 +22,4 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/outlined_button"
         android:text="@string/take_new_photo" />
-
 </androidx.appcompat.widget.LinearLayoutCompat>

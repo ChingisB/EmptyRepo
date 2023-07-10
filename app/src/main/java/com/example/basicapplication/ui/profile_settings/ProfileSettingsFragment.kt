@@ -101,8 +101,8 @@ class ProfileSettingsFragment : BaseFragment<FragmentProfileSettingsBinding, Pro
             }
         }
 
-        sharedImageViewModel.imageLiveData.observe(viewLifecycleOwner){
-            if(it != null){
+        sharedImageViewModel.imageLiveData.observe(viewLifecycleOwner){file ->
+            file?.let {
                 binding.avatarImage.setImageURI(it.toUri())
                 binding.avatarImage.scaleType = ImageView.ScaleType.FIT_CENTER
                 viewModel.submitEvent(ProfileSettingFormEvent.AvatarChanged(it.toUri()))

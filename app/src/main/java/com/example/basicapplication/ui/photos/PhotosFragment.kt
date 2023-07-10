@@ -26,7 +26,6 @@ class PhotosFragment : PagingFragment<FragmentNewPhotosBinding, PaginatedPhotosE
     @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
     override val viewModel by viewModels<PhotosViewModel> { viewModelFactory }
     override val spanCount = 2
-    override val spaceSize = 10
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
 
 
@@ -51,7 +50,9 @@ class PhotosFragment : PagingFragment<FragmentNewPhotosBinding, PaginatedPhotosE
     override fun createListAdapter() = PhotoListAdapter {
         sharedPhotoViewModel.setPhoto(it)
         (activity as MainActivity).supportFragmentManager.beginTransaction()
-            .add(R.id.activityFragmentContainer, PhotoDetailsFragment()).addToBackStack(Constants.PHOTO_DETAILS).commit()
+            .add(R.id.activityFragmentContainer, PhotoDetailsFragment())
+            .addToBackStack(Constants.PHOTO_DETAILS)
+            .commit()
     }
 
     override fun setupListeners() {
@@ -70,9 +71,7 @@ class PhotosFragment : PagingFragment<FragmentNewPhotosBinding, PaginatedPhotosE
         }
     }
 
-    override fun changePageLoadingState(isLoading: Boolean) {
-        binding.progressBar.isVisible = isLoading
-    }
+    override fun changePageLoadingState(isLoading: Boolean) { binding.progressBar.isVisible = isLoading }
 
     override fun showPageError(error: Resource.Error) {
         binding.photoGrid.adapter = PlaceHolderAdapter()

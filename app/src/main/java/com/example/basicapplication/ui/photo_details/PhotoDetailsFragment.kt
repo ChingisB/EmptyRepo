@@ -2,18 +2,16 @@ package com.example.basicapplication.ui.photo_details
 
 
 import android.content.Context
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
-import com.example.basicapplication.R
 import com.example.basicapplication.SharedPhotoViewModel
 import com.example.basicapplication.databinding.FragmentPhotoDetailsBinding
+import com.example.basicapplication.util.Constants
 import com.example.data.api.Config
 import com.example.domain.entity.PhotoEntity
-import com.example.util.Resource
 import javax.inject.Inject
 
 
@@ -43,7 +41,6 @@ class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDeta
     }
 
     override fun observeData() {
-        super.observeData()
         sharedPhotoViewModel.photoLiveData.observe(viewLifecycleOwner) {
             photoEntity = it
             binding.photoName.text = it.name
@@ -53,18 +50,13 @@ class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDeta
             Glide.with(binding.image).load(Config.MEDIA_URL + it.image.name).into(binding.image)
             viewModel.viewPhoto(it)
             viewModel.getTotalViews(it.id){ totalViews ->
-                binding.totalViewsText.text = if(totalViews > 999) "999+" else totalViews.toString()
+                binding.totalViewsText.text = if(totalViews > 999) Constants.MAX_VIEWS else totalViews.toString()
             }
         }
 
-        sharedPhotoViewModel.userLiveData.observe(viewLifecycleOwner){
-            binding.usernameText.text = it.username
-        }
+        sharedPhotoViewModel.userLiveData.observe(viewLifecycleOwner){ binding.usernameText.text = it.username }
 
-        viewModel.photoSavedState.observe(viewLifecycleOwner){
-            if(it is Resource.Success) binding.saveButton.isChecked = it.data
-            if(it is Resource.Error) Toast.makeText(requireContext(), R.string.saving_error, Toast.LENGTH_SHORT).show()
-        }
+        viewModel.photoSavedState.observe(viewLifecycleOwner){ binding.saveButton.isChecked = it }
     }
 
 }

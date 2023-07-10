@@ -35,7 +35,7 @@ class ProfileViewModel(
     private fun getUser() {
         getCurrentUserUseCase.invoke().subscribe(
             { _userLiveData.postValue(Resource.Success(it)) },
-            { _userLiveData.postValue(Resource.Error(message = it.message.toString())) }
+            { _userLiveData.postValue(Resource.Error(it.message.toString())) }
         ).let(compositeDisposable::add)
     }
 

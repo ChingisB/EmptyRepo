@@ -25,10 +25,7 @@ class MakeViewModel(private val remotePhotoRepository: RemotePhotoRepository) : 
         remotePhotoRepository.create(name = name, description = description, new = new, popular = popular, imageFile = imageFile)
             .doOnSubscribe { _createPhotoResultLiveData.postValue(Resource.Loading) }.subscribe(
             { _createPhotoResultLiveData.postValue(Resource.Success(it)) },
-            {
-                it.printStackTrace()
-                _createPhotoResultLiveData.postValue(Resource.Error(message = it.message.toString()))
-            }
+            { _createPhotoResultLiveData.postValue(Resource.Error(message = it.message.toString())) }
         ).let(compositeDisposable::add)
     }
 

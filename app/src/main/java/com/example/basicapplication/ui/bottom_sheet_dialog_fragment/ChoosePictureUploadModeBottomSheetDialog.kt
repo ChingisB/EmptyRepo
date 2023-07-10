@@ -3,7 +3,6 @@ package com.example.basicapplication.ui.bottom_sheet_dialog_fragment
 import android.Manifest
 import android.app.Dialog
 import android.content.ContentValues
-
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,12 +17,12 @@ import androidx.fragment.app.activityViewModels
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.SharedImageViewModel
 import com.example.basicapplication.databinding.BottomSheetDialogBinding
+import com.example.basicapplication.util.Constants
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ChoosePictureUploadModeBottomSheetDialog : BottomSheetDialogFragment() {
-
 
     private val binding by lazy { BottomSheetDialogBinding.inflate(layoutInflater) }
     private val viewModel: SharedImageViewModel by activityViewModels()
@@ -81,8 +80,8 @@ class ChoosePictureUploadModeBottomSheetDialog : BottomSheetDialogFragment() {
             requestPermissionsLauncher.launch(permission)
         } else {
             val contentValues = ContentValues()
-            contentValues.put(MediaStore.Images.Media.TITLE, "New picture from camera")
-            contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Some new picture")
+            contentValues.put(MediaStore.Images.Media.TITLE, Constants.NEW_MEDIA_FILE_KEY)
+            contentValues.put(MediaStore.Images.Media.DESCRIPTION, Constants.NEW_MEDIA_FILE_DESCRIPTION)
             val createdUri = requireContext().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             if(createdUri != null){
                 imageUri = createdUri

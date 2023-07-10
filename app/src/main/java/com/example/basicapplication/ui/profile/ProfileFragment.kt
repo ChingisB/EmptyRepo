@@ -2,7 +2,6 @@ package com.example.basicapplication.ui.profile
 
 import android.content.Context
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -30,7 +29,6 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
     @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
     override val viewModel by viewModels<ProfileViewModel> { viewModelFactory }
     override val spanCount = 4
-    override val spaceSize = 6
     private val sharedUserViewModel: SharedUserViewModel by activityViewModels()
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
 
@@ -42,13 +40,14 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
 
     override fun getViewBinding() = FragmentProfileBinding.inflate(layoutInflater)
 
-    override fun createListAdapter(): PhotoListAdapter {
-        return PhotoListAdapter {
+    override fun createListAdapter(): PhotoListAdapter =
+        PhotoListAdapter {
             sharedPhotoViewModel.setPhoto(it)
             (activity as MainActivity).supportFragmentManager.beginTransaction()
-                .addToBackStack(Constants.PHOTO_DETAILS).add(R.id.activityFragmentContainer, PhotoDetailsFragment()).commit()
+                .addToBackStack(Constants.PHOTO_DETAILS)
+                .add(R.id.activityFragmentContainer, PhotoDetailsFragment())
+                .commit()
         }
-    }
 
     override fun setupViews() {
         setupRecyclerView(binding.photoGrid)
@@ -73,18 +72,17 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
                             .commit()
                     }
                     viewModel.getUserViews(value) { totalViews ->
-                        binding.totalViewsText.text = if(totalViews > 999) "999+" else totalViews.toString()
+                        binding.totalViewsText.text = if (totalViews > 999) Constants.MAX_VIEWS else totalViews.toString()
                     }
                 }
-
                 is Resource.Loading -> {}
-                is Resource.Error -> { Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show() }
+                is Resource.Error -> { showToastShort(it.message) }
             }
         }
 
         viewModel.data.observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Success ->{
+                is Resource.Success -> {
                     binding.totalImagesText.text = it.data.totalItems.toString()
                     binding.refreshBar.isRefreshing = false
                 }
@@ -93,14 +91,14 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
             }
         }
 
-        viewModel.avatarLiveData.observe(viewLifecycleOwner){ if(it is Resource.Success) sharedUserViewModel.setAvatar(it.data) }
+        viewModel.avatarLiveData.observe(viewLifecycleOwner) { if (it is Resource.Success) sharedUserViewModel.setAvatar(it.data) }
 
         sharedUserViewModel.userLiveData.observe(viewLifecycleOwner) {
             binding.username.text = it.username
             binding.birthday.text = it.birthday
         }
 
-        sharedUserViewModel.avatarLiveData.observe(viewLifecycleOwner){
+        sharedUserViewModel.avatarLiveData.observe(viewLifecycleOwner) {
             Glide.with(this).load(it).into(binding.avatarImage)
             binding.avatarImage.scaleType = ImageView.ScaleType.FIT_CENTER
         }

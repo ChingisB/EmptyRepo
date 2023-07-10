@@ -19,15 +19,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun getViewBinding() = FragmentHomeBinding.inflate(layoutInflater)
 
     override fun setupViews() {
-        val viewPagerAdapter = ViewPagerAdapter(this)
-        binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.adapter = ViewPagerAdapter(this)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, pos ->
-            when (pos) {
-                0 -> tab.setText(R.string.new_text)
-                else -> tab.setText(R.string.popular_text)
-            }
+            tab.setText(when (pos) {0 -> R.string.new_text else -> R.string.popular_text })
         }.attach()
-
         binding.searchBar.isClickable = true
     }
 

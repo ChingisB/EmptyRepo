@@ -5,10 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import javax.inject.Inject
 
-class TokenViewModel(sharedPreferences: SharedPreferences) : ViewModel() {
+class TokenViewModel(sharedPreferences: SharedPreferences) : BaseViewModel() {
 
 
     private val _tokenLiveData = MutableLiveData<String?>()
@@ -17,9 +18,7 @@ class TokenViewModel(sharedPreferences: SharedPreferences) : ViewModel() {
     init {
         _tokenLiveData.postValue(sharedPreferences.getString(Constants.REFRESH_TOKEN_KEY, null))
         sharedPreferences.registerOnSharedPreferenceChangeListener { preferences, key ->
-            if(key == Constants.REFRESH_TOKEN_KEY){
-                _tokenLiveData.postValue(preferences.getString(key, null))
-            }
+            if(key == Constants.REFRESH_TOKEN_KEY){ _tokenLiveData.postValue(preferences.getString(key, null)) }
         }
     }
 

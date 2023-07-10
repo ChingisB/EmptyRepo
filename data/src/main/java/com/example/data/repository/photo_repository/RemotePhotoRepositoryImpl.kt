@@ -26,27 +26,19 @@ class RemotePhotoRepositoryImpl @Inject constructor(
     private val photoApiToEntityMapper = PhotoApiToEntityMapper(ImageApiToEntityMapper())
 
     override fun create(name: String, description: String, popular: Boolean, new: Boolean, imageFile: File): Single<PhotoEntity> =
-        imageService.createImage(MultipartBody.Part.createFormData(
-            "file",
-            imageFile.name,
-            RequestBody.create(MediaType.parse("image/*"), imageFile))
-        ).flatMap {photoService.createPhoto(CreatePhoto(
-            name = name,
-            description = description,
-            new = new,
-            popular = popular,
-            image = "api/media_objects/${it.id}",
-            )
-        ).map(photoApiToEntityMapper::convert)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-
+        imageService.createImage(
+            MultipartBody.Part.createFormData("file", imageFile.name, RequestBody.create(MediaType.parse("image/*"), imageFile))
+        ).flatMap {
+            photoService.createPhoto(
+                CreatePhoto(name = name, description = description, new = new, popular = popular, image = "api/media_objects/${it.id}")
+            ).map(photoApiToEntityMapper::convert)
+        }.subscribeOn(Schedulers.io())  .observeOn(AndroidSchedulers.mainThread())
 
     override fun getPhotos(new: Boolean, popular: Boolean, query: String, page: Int): Single<PaginatedPhotosEntity> =
         photoService.getPhotos(new = new, popular = popular, query = query, page = page)
             .map(this::convertPhotoResponseToEntity)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-
 
     override fun getUserPhotos(userId: Int, page: Int): Single<PaginatedPhotosEntity> =
         photoService.getPhotos(userId = userId, page = page)
@@ -59,7 +51,6 @@ class RemotePhotoRepositoryImpl @Inject constructor(
             .map(photoApiToEntityMapper::convert)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-
 
     override fun delete(id: Int) = photoService.deletePhoto(id).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
 

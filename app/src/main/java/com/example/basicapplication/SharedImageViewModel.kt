@@ -15,13 +15,11 @@ class SharedImageViewModel(private val fileResolver: FileFromUriResolver): ViewM
     private val _imageLiveData = MutableLiveData<File?>(null)
     val imageLiveData: LiveData<File?> = _imageLiveData
 
-    fun setImageFile(imageUri: Uri){
-        _imageLiveData.postValue(fileResolver.parseFileFromUri(imageUri))
-    }
+    
+    fun setImageFile(imageUri: Uri) = _imageLiveData.postValue(fileResolver.parseFileFromUri(imageUri))
 
-    fun clearImageFile(){
-        _imageLiveData.postValue(null)
-    }
+    fun clearImageFile() = _imageLiveData.postValue(null)
+
 
     class Factory @Inject constructor(private val fileResolver: FileFromUriResolver): ViewModelProvider.Factory{
         @Suppress("UNCHECKED_CAST")

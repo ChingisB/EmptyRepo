@@ -4,7 +4,7 @@ package com.example.basicapplication.ui.welcome
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
@@ -13,14 +13,12 @@ import com.example.basicapplication.databinding.FragmentWelcomeBinding
 import com.example.basicapplication.ui.bottom_navigation.BottomNavigationFragment
 import com.example.basicapplication.ui.sign_in.SignInFragment
 import com.example.basicapplication.ui.sign_up.SignUpFragment
-import javax.inject.Inject
 
-class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, WelcomeViewModel>() {
 
-    @Inject
-    lateinit var tokenViewModelFactory: TokenViewModel.Factory
-    override val viewModel: WelcomeViewModel by viewModels()
-    private val tokenViewModel by viewModels<TokenViewModel> { tokenViewModelFactory }
+class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, TokenViewModel>() {
+
+    override val viewModel: TokenViewModel by activityViewModels()
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -37,7 +35,7 @@ class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, WelcomeViewModel>()
 
     override fun observeData() {
         super.observeData()
-        tokenViewModel.tokenLiveData.observe(this) { token ->
+        viewModel.tokenLiveData.observe(this) { token ->
             when (token) {
                 null -> {}
                 else ->{

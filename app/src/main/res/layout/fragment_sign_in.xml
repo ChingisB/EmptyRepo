@@ -58,7 +58,6 @@
             android:layout_marginTop="57dp"
             app:endIconDrawable="@drawable/ic_mail">
 
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email"
                 style="@style/editTextStyle"
@@ -127,6 +126,5 @@
             android:text="@string/signup"
             android:textColor="@color/black"
             android:textSize="17sp" />
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 </ScrollView>

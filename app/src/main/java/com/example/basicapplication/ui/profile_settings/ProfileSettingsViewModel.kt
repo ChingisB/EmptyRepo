@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.base.BaseViewModel
+import com.example.basicapplication.R
 import com.example.basicapplication.util.Constants
 import com.example.data.api.model.NetworkError
 import com.example.data.repository.AvatarRepository
@@ -35,7 +36,6 @@ class ProfileSettingsViewModel(
     private val signOutUseCase: SignOutUseCase,
     private val resourceProvider: ResourceProvider
 ) : BaseViewModel() {
-
 
     private val _updateUserResult = MutableLiveData<Resource<UserEntity>>()
     val updateUserResult: LiveData<Resource<UserEntity>> = _updateUserResult
@@ -75,17 +75,17 @@ class ProfileSettingsViewModel(
         val formState = _profileSettingsFormState.value ?: initialUserInfoState
 
         when (event) {
-            is ProfileSettingFormEvent.UsernameChanged -> {
-                _profileSettingsFormState.postValue(formState.copy(username = event.username, usernameError = null))
-            }
+            is ProfileSettingFormEvent.EmailChanged -> _profileSettingsFormState.postValue(
+                formState.copy(email = event.email, emailError = null)
+            )
 
-            is ProfileSettingFormEvent.BirthdayChanged -> {
-                _profileSettingsFormState.postValue(formState.copy(birthday = event.birthday, birthdayError = null))
-            }
+            is ProfileSettingFormEvent.UsernameChanged -> _profileSettingsFormState.postValue(
+                formState.copy(username = event.username, usernameError = null)
+            )
 
-            is ProfileSettingFormEvent.EmailChanged -> {
-                _profileSettingsFormState.postValue(formState.copy(email = event.email, emailError = null))
-            }
+            is ProfileSettingFormEvent.BirthdayChanged -> _profileSettingsFormState.postValue(
+                formState.copy(birthday = event.birthday, birthdayError = null)
+            )
 
             is ProfileSettingFormEvent.OldPasswordChanged -> _profileSettingsFormState.postValue(
                 formState.copy(oldPassword = event.oldPassword, oldPasswordError = null)
@@ -100,6 +100,7 @@ class ProfileSettingsViewModel(
             )
 
             is ProfileSettingFormEvent.AvatarChanged -> _profileSettingsFormState.postValue(formState.copy(avatar = event.uri))
+
             else -> submitProfileSettingsForm()
         }
     }
@@ -122,7 +123,6 @@ class ProfileSettingsViewModel(
         val newPassword = formState.newPassword
         val confirmPassword = formState.confirmPassword
 
-
         val usernameResult = validateUsernameUseCase.invoke(formState.username)
         val birthdayResult = validateBirthdayUseCase.invoke(formState.birthday)
         val emailResult = validateEmailUseCase.invoke(formState.email)
@@ -131,14 +131,12 @@ class ProfileSettingsViewModel(
         val confirmPasswordResult = validateConfirmPasswordUseCase.invoke(formState.newPassword, formState.confirmPassword)
 
         val isInitialFormState = checkIsInitialFormState()
-
         if (formState.avatar != null) uploadAvatar(formState.avatar)
 
         if (isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) return
 
         if (!isInitialFormState && listOf(oldPassword, newPassword, confirmPassword).all { it.isBlank() || it.isEmpty() }) {
-            val hasError = listOf(usernameResult, birthdayResult, emailResult).any { !it.success }
-            if (hasError) {
+            if (listOf(usernameResult, birthdayResult, emailResult).any { !it.success }) {
                 _profileSettingsFormState.postValue(
                     formState.copy(
                         usernameError = usernameResult.errorMessage,
@@ -153,8 +151,7 @@ class ProfileSettingsViewModel(
         }
 
         if (isInitialFormState) {
-            val hasError = listOf(oldPasswordResult, newPasswordResult, confirmPasswordResult).any { !it.success }
-            if (hasError) {
+            if (listOf(oldPasswordResult, newPasswordResult, confirmPasswordResult).any { !it.success }) {
                 _profileSettingsFormState.postValue(
                     formState.copy(
                         oldPasswordError = oldPasswordResult.errorMessage,
@@ -168,9 +165,9 @@ class ProfileSettingsViewModel(
             return
         }
 
-        val hasError = listOf(usernameResult, birthdayResult, emailResult, oldPasswordResult, newPasswordResult, confirmPasswordResult)
-            .any { !it.success }
-        if (hasError) {
+        if (listOf(usernameResult, birthdayResult, emailResult, oldPasswordResult, newPasswordResult, confirmPasswordResult)
+                .any { !it.success }
+        ) {
             _profileSettingsFormState.postValue(
                 formState.copy(
                     usernameError = usernameResult.errorMessage,
@@ -191,21 +188,9 @@ class ProfileSettingsViewModel(
         remoteUserRepository.updatePassword(userId, oldPassword, newPassword).subscribe(
             { _updatePasswordResult.postValue(true) },
             { error ->
-                val message: String
                 if (error is HttpException) {
-                    if (error.code() == 500) {
-                        _updatePasswordResult.postValue(true)
-                    }
-                    val body = error.response()?.errorBody()?.string()
-                    val adapter = Gson().getAdapter(NetworkError::class.java)
-                    val errorResponse = adapter.fromJson(body.toString())
-                    message = errorResponse.detail
-                    val formState = _profileSettingsFormState.value ?: ProfileSettingFormState()
-                    if (message.contains("oldPassword")) {
-                        _profileSettingsFormState.postValue(
-                            formState.copy(oldPasswordError = resourceProvider.getMessage("incorrect_old_password"))
-                        )
-                    }
+                    if (error.code() == 500) _updatePasswordResult.postValue(true)
+                    else handleNetworkError(error)
                 }
             }
         ).let(compositeDisposable::add)
@@ -214,25 +199,7 @@ class ProfileSettingsViewModel(
     private fun updateUserInfo(username: String, email: String, birthday: String) {
         remoteUserRepository.updateUser(userId, username = username, email = email, birthday = birthday).subscribe(
             { _updateUserResult.postValue(Resource.Success(it)) },
-            { error ->
-                var message: String = Constants.NETWORK_ERROR
-                if (error is HttpException) {
-                    val body = error.response()?.errorBody()?.string()
-                    val adapter = Gson().getAdapter(NetworkError::class.java)
-                    val errorResponse = adapter.fromJson(body.toString())
-                    message = errorResponse.detail
-                    val formState = _profileSettingsFormState.value ?: ProfileSettingFormState()
-                    if (message.contains("email")) {
-                        _profileSettingsFormState.postValue(formState.copy(emailError = resourceProvider.getMessage("email_in_use_error")))
-                    }
-                    if (message.contains("username")) {
-                        _profileSettingsFormState.postValue(
-                            formState.copy(usernameError = resourceProvider.getMessage("username_in_use_error"))
-                        )
-                    }
-                }
-                _updateUserResult.postValue(Resource.Error(message))
-            }
+            { error -> if (error is HttpException) handleNetworkError(error) }
         ).let(compositeDisposable::add)
     }
 
@@ -242,6 +209,27 @@ class ProfileSettingsViewModel(
             { _updateAvatarResult.postValue(true) },
             { _updateAvatarResult.postValue(false) }
         ).let(compositeDisposable::add)
+    }
+
+    private fun handleNetworkError(error: HttpException) {
+        val body = error.response()?.errorBody()?.string()
+        val adapter = Gson().getAdapter(NetworkError::class.java)
+        val errorResponse = adapter.fromJson(body.toString())
+        val message = errorResponse.detail
+        val formState = _profileSettingsFormState.value ?: ProfileSettingFormState()
+        if (message.contains("email")) {
+            _profileSettingsFormState.postValue(formState.copy(emailError = resourceProvider.getMessage(R.string.email_in_use_error)))
+        }
+        if (message.contains("username")) {
+            _profileSettingsFormState.postValue(
+                formState.copy(usernameError = resourceProvider.getMessage(R.string.username_in_use_error))
+            )
+        }
+        if (message.contains("oldPassword")) {
+            _profileSettingsFormState.postValue(
+                formState.copy(oldPasswordError = resourceProvider.getMessage(R.string.incorrect_old_password))
+            )
+        }
     }
 
     class Factory @Inject constructor(

@@ -15,22 +15,23 @@ class PhotoDetailsViewModel(
     private val photoViewsRepository: PhotoViewsRepository
 ) : BaseViewModel() {
 
-    private val _photoSavedState = MutableLiveData<Resource<Boolean>>()
-    val photoSavedState: LiveData<Resource<Boolean>> = _photoSavedState
+    private val _photoSavedState = MutableLiveData<Boolean>()
+    val photoSavedState: LiveData<Boolean> = _photoSavedState
+
 
     fun savePhoto(photoEntity: PhotoEntity) {
         photoEntity.isSaved = true
-        localPhotoRepository.savePhoto(photoEntity).doOnSubscribe { _photoSavedState.postValue(Resource.Loading) }.subscribe(
-            { _photoSavedState.postValue(Resource.Success(true)) },
-            { _photoSavedState.postValue(Resource.Error(it.message ?: Constants.SAVING_ERROR)) }
+        localPhotoRepository.savePhoto(photoEntity).subscribe(
+            { _photoSavedState.postValue(true) },
+            { _photoSavedState.postValue(false) }
         ).let(compositeDisposable::add)
     }
 
     fun removePhoto(photoEntity: PhotoEntity) {
         photoEntity.isSaved = false
-        localPhotoRepository.removePhoto(photoEntity).doOnSubscribe { _photoSavedState.postValue(Resource.Loading) }.subscribe(
-            { _photoSavedState.postValue(Resource.Success(false)) },
-            { _photoSavedState.postValue(Resource.Error(it.message ?: Constants.SAVING_ERROR)) }
+        localPhotoRepository.removePhoto(photoEntity).subscribe(
+            { _photoSavedState.postValue(false) },
+            { _photoSavedState.postValue( true) }
         ).let(compositeDisposable::add)
     }
 

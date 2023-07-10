@@ -20,10 +20,8 @@ import javax.inject.Inject
 
 class FavouriteFragment : PagingFragment<FragmentFavouriteBinding, PaginatedPhotosEntity, FavouriteViewModel, PhotoListAdapter>() {
 
-    @Inject
-    lateinit var viewModelFactory: FavouriteViewModel.Factory
+    @Inject lateinit var viewModelFactory: FavouriteViewModel.Factory
     override val spanCount: Int = 2
-    override val spaceSize: Int = 10
     override val viewModel: FavouriteViewModel by viewModels { viewModelFactory }
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
 
@@ -58,9 +56,7 @@ class FavouriteFragment : PagingFragment<FragmentFavouriteBinding, PaginatedPhot
         }
     }
 
-    override fun changePageLoadingState(isLoading: Boolean) {
-        binding.progressBar.isVisible = isLoading
-    }
+    override fun changePageLoadingState(isLoading: Boolean) { binding.progressBar.isVisible = isLoading }
 
     override fun showPageError(error: Resource.Error) {
         binding.photoGrid.adapter = PlaceHolderAdapter()
