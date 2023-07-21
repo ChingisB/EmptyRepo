@@ -20,8 +20,7 @@ import javax.inject.Inject
 
 class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDetailsViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: DaggerViewModelFactory
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
     override val viewModel: PhotoDetailsViewModel by viewModels { viewModelFactory }
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
     private lateinit var photoEntity: PhotoEntity
@@ -49,8 +48,8 @@ class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDeta
                 ValueAnimator.ofArgb(pinkColor, greyColor)
             }.apply {
                 duration = LIKE_ANIMATION_DURATION
+                addUpdateListener { binding.saveButton.background.setTint(it.animatedValue as Int)}
                 start()
-                addUpdateListener { binding.saveButton.background.setTint(it.getAnimatedValue() as Int)}
             }
         }
     }
