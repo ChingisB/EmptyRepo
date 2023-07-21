@@ -25,7 +25,7 @@ import com.google.gson.Gson
 import retrofit2.HttpException
 import javax.inject.Inject
 
-class ProfileSettingsViewModel(
+class ProfileSettingsViewModel @Inject constructor(
     private val remoteUserRepository: RemoteUserRepository,
     private val avatarRepository: AvatarRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
@@ -232,30 +232,4 @@ class ProfileSettingsViewModel(
         }
     }
 
-    class Factory @Inject constructor(
-        private val remoteUserRepository: RemoteUserRepository,
-        private val avatarRepository: AvatarRepository,
-        private val validateUsername: ValidateUsernameUseCase,
-        private val validateEmail: ValidateEmailUseCase,
-        private val validateBirthday: ValidateBirthdayUseCase,
-        private val validatePassword: ValidatePasswordUseCase,
-        private val validateConfirmPassword: ValidateConfirmPasswordUseCase,
-        private val signOutUseCase: SignOutUseCase,
-        private val resourceProvider: ResourceProvider
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
-            @Suppress("UNCHECKED_CAST")
-            return ProfileSettingsViewModel(
-                remoteUserRepository,
-                avatarRepository,
-                validateUsername,
-                validateEmail,
-                validateBirthday,
-                validatePassword,
-                validateConfirmPassword,
-                signOutUseCase,
-                resourceProvider
-            ) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
-    }
 }

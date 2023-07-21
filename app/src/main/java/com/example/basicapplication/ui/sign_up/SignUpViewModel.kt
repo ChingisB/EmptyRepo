@@ -2,11 +2,8 @@ package com.example.basicapplication.ui.sign_up
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.example.base.BaseViewModel
 import com.example.basicapplication.R
-import com.example.basicapplication.util.Constants
 import com.example.data.api.model.NetworkError
 import com.example.data.repository.authentication_repository.AuthenticationRepository
 import com.example.domain.resource_provider.ResourceProvider
@@ -21,7 +18,7 @@ import retrofit2.HttpException
 import java.util.UUID
 import javax.inject.Inject
 
-class SignUpViewModel(
+class SignUpViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     private val validateUsername: ValidateUsernameUseCase,
     private val validateBirthday: ValidateBirthdayUseCase,
@@ -126,32 +123,4 @@ class SignUpViewModel(
         }
     }
 
-
-    class Factory @Inject constructor(
-        private val authenticationRepository: AuthenticationRepository,
-        private val validateUsername: ValidateUsernameUseCase,
-        private val validateBirthday: ValidateBirthdayUseCase,
-        private val validateEmail: ValidateEmailUseCase,
-        private val validatePassword: ValidatePasswordUseCase,
-        private val validateConfirmPassword: ValidateConfirmPasswordUseCase,
-        private val convertLocalDate: ConvertLocalDateUseCase,
-        private val parseLocalDate: ParseDateUseCase,
-        private val resourceProvider: ResourceProvider
-    ) : ViewModelProvider.Factory {
-
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
-            @Suppress("UNCHECKED_CAST")
-            return SignUpViewModel(
-                authenticationRepository,
-                validateUsername,
-                validateBirthday,
-                validateEmail,
-                validatePassword,
-                validateConfirmPassword,
-                convertLocalDate,
-                parseLocalDate,
-                resourceProvider
-            ) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
-    }
 }

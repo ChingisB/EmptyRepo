@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -13,6 +14,7 @@ import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
 import com.example.basicapplication.SharedPhotoViewModel
 import com.example.basicapplication.SharedUserViewModel
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentProfileBinding
 import com.example.basicapplication.ui.adapter.PhotoListAdapter
 import com.example.basicapplication.ui.photo_details.PhotoDetailsFragment
@@ -25,12 +27,11 @@ import javax.inject.Inject
 
 class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEntity, ProfileViewModel, PhotoListAdapter>() {
 
-    @Inject lateinit var viewModelFactory: ProfileViewModel.Factory
-    @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
-    override val viewModel by viewModels<ProfileViewModel> { viewModelFactory }
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
+    override val viewModel: ProfileViewModel by viewModels { viewModelFactory }
     override val spanCount = 4
     private val sharedUserViewModel: SharedUserViewModel by activityViewModels()
-    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
+    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { viewModelFactory }
 
 
     override fun onAttach(context: Context) {
@@ -43,10 +44,10 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
     override fun createListAdapter(): PhotoListAdapter =
         PhotoListAdapter {
             sharedPhotoViewModel.setPhoto(it)
-            (activity as MainActivity).supportFragmentManager.beginTransaction()
-                .addToBackStack(Constants.PHOTO_DETAILS)
-                .add(R.id.activityFragmentContainer, PhotoDetailsFragment())
-                .commit()
+            (activity as MainActivity).supportFragmentManager.commit{
+                addToBackStack(Constants.PHOTO_DETAILS)
+                add(R.id.activityFragmentContainer, PhotoDetailsFragment())
+            }
         }
 
     override fun setupViews() {
@@ -66,10 +67,10 @@ class ProfileFragment : PagingFragment<FragmentProfileBinding, PaginatedPhotosEn
                     if (viewModel.data.value == null) viewModel.loadPage()
                     if (viewModel.avatarLiveData.value == null) viewModel.getAvatar()
                     binding.settingsButton.setOnClickListener {
-                        (requireActivity()).supportFragmentManager.beginTransaction()
-                            .add(R.id.activityFragmentContainer, ProfileSettingsFragment())
-                            .addToBackStack(Constants.PROFILE_SETTINGS)
-                            .commit()
+                        (requireActivity()).supportFragmentManager.commit {
+                            add(R.id.activityFragmentContainer, ProfileSettingsFragment())
+                            addToBackStack(Constants.PROFILE_SETTINGS)
+                        }
                     }
                     viewModel.getUserViews(value) { totalViews ->
                         binding.totalViewsText.text = if (totalViews > 999) Constants.MAX_VIEWS else totalViews.toString()

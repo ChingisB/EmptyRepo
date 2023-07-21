@@ -5,10 +5,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentSignUpBinding
 import com.example.basicapplication.ui.bottom_navigation.BottomNavigationFragment
 import com.example.basicapplication.ui.sign_in.SignInFragment
@@ -18,9 +20,8 @@ import javax.inject.Inject
 
 class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: SignUpViewModel.Factory
-    override val viewModel by viewModels<SignUpViewModel> { viewModelFactory }
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
+    override val viewModel: SignUpViewModel by viewModels { viewModelFactory }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,6 +64,6 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
     }
 
     private fun navigateTo(fragment: Fragment) =
-        parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit().let { }
+        parentFragmentManager.commit{ replace(R.id.activityFragmentContainer, fragment) }
 
 }

@@ -1,6 +1,7 @@
 package com.example.basicapplication.ui.bottom_navigation
 
 
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import com.example.base.BaseFragment
 import com.example.basicapplication.R
@@ -24,7 +25,7 @@ class BottomNavigationFragment : BaseFragment<FragmentBottomNavigationBinding, B
                 R.id.navigation_saved -> FavouriteFragment()
                 else -> HomeFragment()
             }
-            childFragmentManager.beginTransaction().replace(R.id.bottomNavigationFragmentContainer, fragment).commit()
+            childFragmentManager.commit { replace(R.id.bottomNavigationFragmentContainer, fragment) }
             true
         }
     }

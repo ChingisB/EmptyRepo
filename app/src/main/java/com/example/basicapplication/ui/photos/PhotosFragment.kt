@@ -5,10 +5,12 @@ import android.content.Context
 import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.PagingFragment
 import com.example.basicapplication.*
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentNewPhotosBinding
 import com.example.basicapplication.ui.adapter.PhotoListAdapter
 import com.example.basicapplication.ui.home.HomeFragment
@@ -22,11 +24,10 @@ import javax.inject.Inject
 
 class PhotosFragment : PagingFragment<FragmentNewPhotosBinding, PaginatedPhotosEntity, PhotosViewModel, PhotoListAdapter>() {
 
-    @Inject lateinit var viewModelFactory: PhotosViewModel.Factory
-    @Inject lateinit var sharedPhotoViewModelFactory: SharedPhotoViewModel.Factory
-    override val viewModel by viewModels<PhotosViewModel> { viewModelFactory }
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
+    override val viewModel: PhotosViewModel by viewModels{ viewModelFactory }
     override val spanCount = 2
-    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { sharedPhotoViewModelFactory }
+    private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels { viewModelFactory}
 
 
     override fun onAttach(context: Context) {
@@ -49,10 +50,10 @@ class PhotosFragment : PagingFragment<FragmentNewPhotosBinding, PaginatedPhotosE
 
     override fun createListAdapter() = PhotoListAdapter {
         sharedPhotoViewModel.setPhoto(it)
-        (activity as MainActivity).supportFragmentManager.beginTransaction()
-            .add(R.id.activityFragmentContainer, PhotoDetailsFragment())
-            .addToBackStack(Constants.PHOTO_DETAILS)
-            .commit()
+        requireActivity().supportFragmentManager.commit {
+            add(R.id.activityFragmentContainer, PhotoDetailsFragment())
+            addToBackStack(Constants.PHOTO_DETAILS)
+        }
     }
 
     override fun setupListeners() {

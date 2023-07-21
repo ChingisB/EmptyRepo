@@ -13,7 +13,7 @@ import com.example.util.Resource
 import java.io.File
 import javax.inject.Inject
 
-class MakeViewModel(private val remotePhotoRepository: RemotePhotoRepository) : BaseViewModel() {
+class MakeViewModel @Inject constructor(private val remotePhotoRepository: RemotePhotoRepository) : BaseViewModel() {
 
     private val _createPhotoResultLiveData = MutableLiveData<Resource<PhotoEntity>>()
     val createPhotoResultLiveData: LiveData<Resource<PhotoEntity>> = _createPhotoResultLiveData
@@ -27,13 +27,5 @@ class MakeViewModel(private val remotePhotoRepository: RemotePhotoRepository) : 
             { _createPhotoResultLiveData.postValue(Resource.Success(it)) },
             { _createPhotoResultLiveData.postValue(Resource.Error(message = it.message.toString())) }
         ).let(compositeDisposable::add)
-    }
-
-    class Factory @Inject constructor(private val remotePhotoRepository: RemotePhotoRepository) :
-        ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
-            @Suppress("UNCHECKED_CAST")
-            return MakeViewModel(remotePhotoRepository) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
     }
 }

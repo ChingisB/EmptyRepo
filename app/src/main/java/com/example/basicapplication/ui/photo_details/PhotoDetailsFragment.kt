@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.SharedPhotoViewModel
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentPhotoDetailsBinding
 import com.example.basicapplication.util.Constants
 import com.example.data.api.Config
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class PhotoDetailsFragment : BaseFragment<FragmentPhotoDetailsBinding, PhotoDetailsViewModel>() {
 
-    @Inject lateinit var viewModelFactory: PhotoDetailsViewModel.Factory
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
     override val viewModel: PhotoDetailsViewModel by viewModels { viewModelFactory }
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
     private lateinit var photoEntity: PhotoEntity

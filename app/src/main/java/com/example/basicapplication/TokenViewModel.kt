@@ -9,7 +9,7 @@ import com.example.base.BaseViewModel
 import com.example.basicapplication.util.Constants
 import javax.inject.Inject
 
-class TokenViewModel(sharedPreferences: SharedPreferences) : BaseViewModel() {
+class TokenViewModel @Inject constructor(sharedPreferences: SharedPreferences) : BaseViewModel() {
 
 
     private val _tokenLiveData = MutableLiveData<String?>()
@@ -22,11 +22,4 @@ class TokenViewModel(sharedPreferences: SharedPreferences) : BaseViewModel() {
         }
     }
 
-
-    class Factory @Inject constructor(private val preferences: SharedPreferences) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching{
-            @Suppress("UNCHECKED_CAST")
-            return TokenViewModel(preferences) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
-    }
 }

@@ -16,7 +16,7 @@ import com.google.gson.Gson
 import retrofit2.HttpException
 import javax.inject.Inject
 
-class SignInViewModel(
+class SignInViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     private val validateEmail: ValidateEmailUseCase,
     private val validatePassword: ValidatePasswordUseCase,
@@ -83,18 +83,5 @@ class SignInViewModel(
                 )
             )
         }
-    }
-
-    class Factory @Inject constructor(
-        private val authenticationRepository: AuthenticationRepository,
-        private val validateEmail: ValidateEmailUseCase,
-        private val validatePassword: ValidatePasswordUseCase,
-        private val resourceProvider: ResourceProvider
-    ) : ViewModelProvider.Factory {
-
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
-            @Suppress("UNCHECKED_CAST")
-            return SignInViewModel(authenticationRepository, validateEmail, validatePassword, resourceProvider) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
     }
 }

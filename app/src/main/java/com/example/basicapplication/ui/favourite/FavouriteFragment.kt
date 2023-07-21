@@ -3,12 +3,14 @@ package com.example.basicapplication.ui.favourite
 import android.content.Context
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.PagingFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
 import com.example.basicapplication.SharedPhotoViewModel
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentFavouriteBinding
 import com.example.basicapplication.ui.adapter.PhotoListAdapter
 import com.example.basicapplication.ui.photo_details.PhotoDetailsFragment
@@ -20,7 +22,7 @@ import javax.inject.Inject
 
 class FavouriteFragment : PagingFragment<FragmentFavouriteBinding, PaginatedPhotosEntity, FavouriteViewModel, PhotoListAdapter>() {
 
-    @Inject lateinit var viewModelFactory: FavouriteViewModel.Factory
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
     override val spanCount: Int = 2
     override val viewModel: FavouriteViewModel by viewModels { viewModelFactory }
     private val sharedPhotoViewModel: SharedPhotoViewModel by activityViewModels()
@@ -37,11 +39,10 @@ class FavouriteFragment : PagingFragment<FragmentFavouriteBinding, PaginatedPhot
     override fun createListAdapter(): PhotoListAdapter =
         PhotoListAdapter {
             sharedPhotoViewModel.setPhoto(it)
-            (requireActivity()).supportFragmentManager
-                .beginTransaction()
-                .addToBackStack(Constants.PHOTO_DETAILS)
-                .add(R.id.activityFragmentContainer, PhotoDetailsFragment())
-                .commit()
+            (requireActivity()).supportFragmentManager.commit {
+                addToBackStack(Constants.PHOTO_DETAILS)
+                add(R.id.activityFragmentContainer, PhotoDetailsFragment())
+            }
         }
 
     override fun setupListeners() = binding.refreshBar.setOnRefreshListener { viewModel.refreshData() }

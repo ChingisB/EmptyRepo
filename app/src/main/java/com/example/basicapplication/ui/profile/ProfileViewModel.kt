@@ -16,7 +16,7 @@ import com.example.domain.use_case.GetUserPhotosUseCase
 import com.example.util.Resource
 import javax.inject.Inject
 
-class ProfileViewModel(
+class ProfileViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val getUserPhotosUseCase: GetUserPhotosUseCase,
     private val avatarRepository: AvatarRepository,
@@ -53,20 +53,5 @@ class ProfileViewModel(
     }
 
     fun getUserViews(userEntity: UserEntity, callback: (Long) -> Unit) = photoViewsRepository.getUserTotalViews(userEntity.id, callback)
-
-
-    class Factory @Inject constructor(
-        private val getCurrentUserUseCase: GetCurrentUserUseCase,
-        private val getUserPhotosUseCase: GetUserPhotosUseCase,
-        private val avatarRepository: AvatarRepository,
-        private val photoViewsRepository: PhotoViewsRepository
-    ) : ViewModelProvider.Factory {
-
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = kotlin.runCatching {
-            @Suppress("UNCHECKED_CAST")
-            return ProfileViewModel(getCurrentUserUseCase, getUserPhotosUseCase, avatarRepository, photoViewsRepository) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
-
-    }
 
 }

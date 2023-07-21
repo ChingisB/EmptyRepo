@@ -18,14 +18,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(
-    modules = [
-        RetrofitModule::class,
-        RepositoryModule::class,
-        UseCaseModule::class,
-        DatabaseModule::class
-    ]
-)
+@Component(modules = [RetrofitModule::class, RepositoryModule::class, UseCaseModule::class, DatabaseModule::class, ViewModelModule::class])
 interface AppComponent {
 
     fun inject(activity: MainActivity)

@@ -8,6 +8,7 @@ import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
 import com.example.basicapplication.SharedImageViewModel
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentMakeBinding
 import com.example.basicapplication.ui.bottom_sheet_dialog_fragment.ChoosePictureUploadModeBottomSheetDialog
 import com.example.util.Resource
@@ -16,10 +17,9 @@ import javax.inject.Inject
 
 class MakeFragment : BaseFragment<FragmentMakeBinding, MakeViewModel>() {
 
-    @Inject lateinit var viewModelFactory: MakeViewModel.Factory
-    @Inject lateinit var sharedImageViewModelFactory: SharedImageViewModel.Factory
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
     override val viewModel: MakeViewModel by activityViewModels { viewModelFactory }
-    private val sharedImageViewModel: SharedImageViewModel by activityViewModels { sharedImageViewModelFactory }
+    private val sharedImageViewModel: SharedImageViewModel by activityViewModels { viewModelFactory }
     private var imageFile: File? = null
 //    TODO BottomSheetDialogFragment
 

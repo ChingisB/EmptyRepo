@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.base.BaseFragment
@@ -14,6 +15,7 @@ import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
 import com.example.basicapplication.SharedImageViewModel
 import com.example.basicapplication.SharedUserViewModel
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.FragmentProfileSettingsBinding
 import com.example.basicapplication.ui.bottom_sheet_dialog_fragment.ChoosePictureUploadModeBottomSheetDialog
 import com.example.basicapplication.ui.sign_in.SignInFragment
@@ -23,10 +25,9 @@ import javax.inject.Inject
 
 class ProfileSettingsFragment : BaseFragment<FragmentProfileSettingsBinding, ProfileSettingsViewModel>() {
 
-    @Inject lateinit var viewModelFactory: ProfileSettingsViewModel.Factory
-    @Inject lateinit var sharedImageViewModelFactory: SharedImageViewModel.Factory
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
     override val viewModel: ProfileSettingsViewModel by viewModels { viewModelFactory }
-    private val sharedImageViewModel: SharedImageViewModel by activityViewModels { sharedImageViewModelFactory }
+    private val sharedImageViewModel: SharedImageViewModel by activityViewModels { viewModelFactory }
     private val sharedUserViewModel: SharedUserViewModel by activityViewModels()
 
 
@@ -48,7 +49,7 @@ class ProfileSettingsFragment : BaseFragment<FragmentProfileSettingsBinding, Pro
         signOutButton.setOnClickListener {
             viewModel.signOut()
             parentFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-            parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, SignInFragment()).commit()
+            parentFragmentManager.commit{ replace(R.id.activityFragmentContainer, SignInFragment()) }
         }
         cancelButton.setOnClickListener { parentFragmentManager.popBackStack() }
         saveButton.setOnClickListener {

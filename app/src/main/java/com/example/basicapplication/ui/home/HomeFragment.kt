@@ -1,7 +1,9 @@
 package com.example.basicapplication.ui.home
 
 
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import android.view.inputmethod.EditorInfo
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.example.base.BaseFragment
 import com.example.basicapplication.R
@@ -23,24 +25,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, pos ->
             tab.setText(when (pos) {0 -> R.string.new_text else -> R.string.popular_text })
         }.attach()
-        binding.searchBar.isClickable = true
+        binding.searchBar.isEndIconVisible = false
     }
 
     override fun setupListeners() {
-        binding.searchBar.setOnQueryTextListener(object: OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean = searchBarCallbacks.forEach { it.invoke(query) }.let { true }
 
-            override fun onQueryTextChange(newText: String?): Boolean = true
-        })
-
-        binding.searchBar.setOnCloseListener {
-            binding.searchBar.clearFocus()
-            binding.searchBar.onActionViewCollapsed()
-            searchBarClosedCallbacks.forEach{ it.invoke() }
+        binding.searchBarEditText.setOnEditorActionListener { view, actionId, _ ->
+            if(actionId == EditorInfo.IME_ACTION_SEARCH){ searchBarCallbacks.forEach { it.invoke(view.text.toString()) }.let { true } }
             true
         }
 
-        binding.searchBar.setOnClickListener { binding.searchBar.isIconified = false }
+        binding.searchBarEditText.addTextChangedListener { binding.searchBar.isEndIconVisible = true }
+
+        binding.searchBar.setEndIconOnClickListener { view ->
+            if(binding.searchBarEditText.text == null || binding.searchBarEditText.text.toString() == ""){
+                view.isVisible = false
+                binding.searchBarEditText.isCursorVisible = false
+                searchBarClosedCallbacks.forEach { it.invoke() }
+            }
+            else binding.searchBarEditText.text = null
+        }
     }
 
     fun addSearchBarCallback(callback: (query: String?) -> Unit) = searchBarCallbacks.add(callback)

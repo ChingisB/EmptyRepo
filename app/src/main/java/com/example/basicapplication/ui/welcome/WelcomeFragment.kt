@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import com.example.base.BaseFragment
 import com.example.basicapplication.MainApplication
 import com.example.basicapplication.R
@@ -45,7 +46,8 @@ class WelcomeFragment : BaseFragment<FragmentWelcomeBinding, TokenViewModel>() {
             }
         }
     }
+
     private fun navigateTo(fragment: Fragment){
-        parentFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, fragment).commit()
+        parentFragmentManager.commit{ replace(R.id.activityFragmentContainer, fragment) }
     }
 }

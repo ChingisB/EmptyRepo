@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
+import com.example.basicapplication.dagger.DaggerViewModelFactory
 import com.example.basicapplication.databinding.ActivityMainBinding
 import com.example.basicapplication.ui.sign_in.SignInFragment
 import javax.inject.Inject
@@ -13,8 +15,8 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject lateinit var tokenViewModelFactory: TokenViewModel.Factory
-    private val tokenViewModel: TokenViewModel by viewModels { tokenViewModelFactory }
+    @Inject lateinit var viewModelFactory: DaggerViewModelFactory
+    private val tokenViewModel: TokenViewModel by viewModels { viewModelFactory }
     val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
 
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 if (value == null) {
                     tokenViewModel.tokenLiveData.removeObserver(this)
                     supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    supportFragmentManager.beginTransaction().replace(R.id.activityFragmentContainer, SignInFragment()).commit()
+                    supportFragmentManager.commit { replace(R.id.activityFragmentContainer, SignInFragment()) }
                 }
             }
 

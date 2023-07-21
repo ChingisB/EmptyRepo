@@ -7,10 +7,9 @@ import com.example.basicapplication.util.Constants
 import com.example.domain.entity.PhotoEntity
 import com.example.domain.repository.PhotoViewsRepository
 import com.example.domain.repository.photo_repository.LocalPhotoRepository
-import com.example.util.Resource
 import javax.inject.Inject
 
-class PhotoDetailsViewModel(
+class PhotoDetailsViewModel @Inject constructor(
     private val localPhotoRepository: LocalPhotoRepository,
     private val photoViewsRepository: PhotoViewsRepository
 ) : BaseViewModel() {
@@ -39,15 +38,4 @@ class PhotoDetailsViewModel(
 
     fun viewPhoto(photoEntity: PhotoEntity) = photoViewsRepository.addPhotoView(photoEntity)
 
-
-    class Factory @Inject constructor(
-        private val localPhotoRepository: LocalPhotoRepository,
-        private val photoViewsRepository: PhotoViewsRepository
-        ) : AbstractSavedStateViewModelFactory() {
-
-        override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T = kotlin.runCatching {
-            @Suppress("UNCHECKED_CAST")
-            return PhotoDetailsViewModel(localPhotoRepository, photoViewsRepository) as T
-        }.getOrElse { error(Constants.UNKNOWN_VIEW_MODEL_CLASS_ERROR) }
-    }
 }
